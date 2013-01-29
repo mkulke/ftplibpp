@@ -1,0 +1,33 @@
+v2.03
+
+- license changed to lgpl
+- added support for osx
+
+v2.0.2
+
+- fixed a bug in the upload routine
+
+v2.0.1
+
+- fixed a problem with the -DNOSSL compile flag
+- removed an unnecessary sys/time.h dependance
+
+v2.0.0
+
+- implemented SSL/TLS certification callback
+- SSLv2 connections aren't allowed any more
+- made library work on win32 systems
+- correct pasv reply functionality for misbehaving NAT servers
+- cleaned up code and slightly modiefied
+ interface
+- ssl support can be turned off now
+- large file support
+- fixed error when fxp'ing a rejected file
+- logging functionality extended
+- callback mechanisms improved
+
+v1.0.1
+
+- ftplib::Fxp was always returning 0, fixed this
+- Quit returns if there's no connection anymore to do QUIT
+- fixed bug in secure upload

@@ -1,0 +1,1624 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>class ftplib</title>
+  <meta name="Generator" content="KDOC ">
+</head>
+<body style="background-color: rgb(255, 255, 255); color: rgb(0, 0, 0);"
+ alink="#ffffff" link="#0000ff" vlink="#000099">
+<table border="0" width="100%">
+  <tbody>
+    <tr>
+      <td>
+      <table border="0">
+        <tbody>
+          <tr>
+            <td cellspacing="10" align="left" valign="top">
+            <h1>class ftplib v2.0<br>
+            </h1>
+            </td>
+            <td colspan="1" align="right" valign="top"><br>
+class providing ftp client functionality <a href="#longdesc">More...</a></td>
+          </tr>
+        </tbody>
+      </table>
+      <hr>
+      <table border="0">
+        <tbody>
+          <tr>
+            <th>Definition:</th>
+            <td><code>&nbsp;#include
+&lt;ftplib.h&gt;</code></td>
+          </tr>
+        </tbody>
+      </table>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<h4>Public Types</h4>
+<ul>
+  <li>int (*<a href="#ftpcallbackidle">FtpCallbackIdle</a>)(void
+*arg)</li>
+  <li>void (*<a href="#ftpcallbacklog">FtpCallbackLog</a>)(char
+*str, void* arg, bool out)</li>
+  <li>int (*<a href="#ftpcallbackxfer">FtpCallbackXfer</a>)(off64_t
+xfered, void *arg)</li>
+  <li>bool (*<a href="#ftpcallbackCert">FtpCallbackCert</a>)(void *arg, X509 *cert)</li>
+  <li>enum <a href="#accesstype">accesstype</a></li>
+  <li>enum <a href="#transfermode">transfermode</a></li>
+  <li>enum <a href="#connmode">connmode</a></li>
+  <li>enum <a href="#fxpmethod">fxpmethod</a></li>
+  <li>enum <a href="#dataencryption">dataencryption</a></li>
+</ul>
+<h4>Public Methods</h4>
+<ul>
+  <li><a href="#ftplib">ftplib</a>()</li>
+  <li>char* <a href="#lastresponse">LastResponse</a>()</li>
+  <li>int <a href="#connect">Connect</a>(const
+char *host)</li>
+  <li>int <a href="#login">Login</a>(const
+char *user, const char *pass)</li>
+  <li>int <a href="#site">Site</a>(const
+char *cmd)</li>
+  <li>int <a href="#raw">Raw</a>(const
+char *cmd)</li>
+  <li>int <a href="#systype">SysType</a>(char*
+buf, int max)</li>
+  <li>int <a href="#mkdir">Mkdir</a>(const
+char *path)</li>
+  <li>int <a href="#chdir">Chdir</a>(const
+char *path)</li>
+  <li>int <a href="#cdup">Cdup</a>()</li>
+  <li>int <a href="#rmdir">Rmdir</a>(const
+char *path)</li>
+  <li>int <a href="#pwd">Pwd</a>(char
+*path, int max)</li>
+  <li>int <a href="#nlst">Nlst</a>(const
+char *outputfile, const char *path)</li>
+  <li>int <a href="#dir">Dir</a>(const
+char *outputfile, const char *path)</li>
+  <li>int <a href="#size">Size</a>(const
+char *path, int *size, transfermode mode)</li>
+  <li>int <a href="#moddate">ModDate</a>(const
+char *path, char *dt, int max)</li>
+  <li>int <a href="#get">Get</a>(const
+char *outputfile, const char *path, transfermode mode)</li>
+  <li>int <a href="#get2">Get</a>(const
+char *outputfile, const char *path, transfermode mode, off64_t offset)</li>
+  <li>int <a href="#put">Put</a>(const
+char *inputfile, const char *path, transfermode mode)</li>
+  <li>int <a href="#put2">Put</a>(const
+char *inputfile, const char *path, transfermode mode, off64_t offset)</li>
+  <li>int <a href="#rename">Rename</a>(const
+char *src, const char *dst)</li>
+  <li>int <a href="#delete">Delete</a>(const
+char *path)</li>
+  <li>int <a href="#setdataencryption">SetDataEncryption</a>(dataencryption
+enc)</li>
+  <li>int <a href="#negotiateencryption">NegotiateEncryption</a>()</li>
+  <li>ftphandle* <a href="#rawopen">RawOpen</a>(const
+char *path, accesstype type, transfermode mode)</li>
+  <li>int <a href="#rawread">RawRead</a>(void
+*buf, int max, ftphandle *handle)</li>
+  <li>int <a href="#rawwrite">RawWrite</a>(void
+*buf, int len, ftphandle *handle)</li>
+  <li>int <a href="#rawclose">RawClose</a>(ftphandle
+*handle)<br>
+  </li>
+  <li>void <a href="#quit">Quit</a>()</li>
+  <li>void <a href="#setcallbackidlefunction">SetCallbackIdleFunction</a>(FtpCallbackIdle
+pointer)</li>
+  <li>void <a href="#setcallbacklogfunction">SetCallbackLogFunction</a>(FtpCallbackLog
+pointer)</li>
+  <li>void <a href="#setcallbackxferfunction">SetCallbackXferFunction</a>(FtpCallbackXfer
+pointer)</li>
+  <li>void <a href="#setcallbackcertfunction">SetCallbackCertFunction</a>(FtpCallbackCert
+pointer)</li>
+  <li>void <a href="#setcallbackarg">SetCallbackArg</a>(void
+*arg)</li>
+  <li>void <a href="#setcallbackbytes">SetCallbackBytes</a>(off64_t
+bytes)</li>
+  <li>void <a href="#setcallbackidletime">SetCallbackIdletime</a>(int
+time)</li>
+  <li>void <a href="#setcorrectpasv">SetCorrectPasv</a>(bool
+b)</li>
+  <li>void <a href="#setconnmode">SetConnmode</a>(ftplib::ftp
+mode)</li>
+</ul>
+<h4>Public Static Methods</h4>
+<ul>
+  <li>static int <a href="#fxp">Fxp</a>
+(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst,
+ftplib::ftp mode, ftplib::ftp method)</li>
+</ul>
+<hr>
+<h2><a name="longdesc">Detailed Description</a></h2>
+<p>
+ftplib++ contains a c++ class providing ftp client functionality. It supports all basic 
+ftp functionality plus some advanced features like resuming, fxp, ssl/tls encryption, 
+large file support, or logging to fit todays standards. The very base of ftplib++ is the 
+nice code of Thomas Pfau's <a href="http://nbpfaus.net/%7Epfau/ftplib/">ftplib</a> c 
+library.
+</p>
+<p>
+Every ftp session is represented by an ftplib object, whose methods are called to 
+communicate with the ftp server. The ftp sessions should begin with a call to 
+<span style="font-style: italic;">myftp.Connect("myftp.org:21")</span> (and maybe 
+<span style="font-style: italic;">myftp.NegotiateEncryption()</span>), be followed with 
+<span style="font-style: italic;">myftp.Login("myuser","mypass")</span> and ended by 
+<span style="font-style: italic;">myftp.Quit()</span>. For the magic in between, read the 
+class methods documentation. Most methods have their tasks pretty much explained in their 
+name. ftplib++ uses openssl for encryption functionality, if you don't need it you can use
+ the "NOSSL" flag, when compiling ftplib.cpp (<span style="font-style: italic;">g++ -c 
+ ftplib.cpp -DNOSSL</span>). If your system does not feature large file support you can 
+ use the "NOLFS" flag (<span style="font-style: italic;">g++ -c ftplib.cpp -DNOLFS<span>).
+</p>
+<hr/>
+<h2>Changelog</h2>
+v2.0.3<br/>
+<ul>
+<li>license changed to LGPL</li>
+<li>added support for OSX</li>
+</ul>
+v2.0.2<br/>
+<ul>
+<li>fixed a bug in the upload routine</li>
+</ul>
+v2.0.1<br/>
+<ul>
+<li>fixed a problem with the -DNOSSL compile flag</li>
+<li>removed an unnecessary sys/time.h dependance</li>
+</ul>
+v2.0.0<br/>
+<ul>
+<li>implemented SSL/TLS certification callback</li>
+<li>SSLv2 connections aren't allowed any more</li>
+<li>made library work on win32 systems</li>
+
+  <li>correct pasv reply
+functionality for misbehaving NAT servers</li>
+  <li>cleaned up code and slightly
+modiefied</li>
+  <li>interface</li>
+  <li>ssl support can be turned
+off now</li>
+  <li>large file support</li>
+  <li>fixed error when fxp'ing a
+rejected file</li>
+  <li>logging functionality
+extended</li>
+  <li>callback mechanisms improved</li>
+</ul>
+v1.0.1<br>
+<ul>
+  <li>ftplib::Fxp was always
+returning 0, fixed this</li>
+  <li>Quit returns if there's no
+connection anymore to do QUIT</li>
+  <li>fixed bug in secure upload</li>
+</ul>
+<hr>
+<a name="accesstype"></a><br>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>enum<span style="font-weight: bold;"> accesstype</span>
+{ dir = 1, dirverbose, fileread, filewrite, filereadappend,
+filewriteappend }; </td>
+      <td align="right">
+      <h3><strong>accesstype<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>This type is used in the <a href="#rawopen">RawOpen</a>
+method.</p>
+<a name="transfermode"></a><br>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>enum<span style="font-weight: bold;"> transfermode</span>
+{ ascii = 'A', image = 'I' };</td>
+      <td align="right">
+      <h3><strong>transfermode<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>This type determines how data
+is transferred.</p>
+<a name="connmode"></a><br>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>enum<span style="font-weight: bold;"> connmode</span>
+{ pasv = 1, port }; </td>
+      <td align="right">
+      <h3><strong>connmode<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>This type determines wether
+data is to be transferred using the pasv or active mode.</p>
+<a name="fxpmethod"></a><br>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>enum<span style="font-weight: bold;"> fxpmethod</span>
+{ defaultfxp = 0, alternativefxp }; </td>
+      <td align="right">
+      <h3><strong>fxpmethod<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>This type is used in the <a href="#fxp">Fxp</a>
+method.</p>
+<a name="dataencryption"></a><br>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>enum<span style="font-weight: bold;"> dataencryption</span>
+{ unencrypted = 0, secure }; </td>
+      <td align="right">
+      <h3><strong>dataencryption<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>This type determines wether
+data is encrypted or not.</p>
+<p><a name="ftpcallbackidle"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int (*<span style="font-weight: bold;">FtpCallbackIdle</span>)(void
+*arg)<br>
+      </td>
+      <td align="right">
+      <h3><strong>FtpCallbackIdle<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>[typedef]<br>
+<br>
+typedef int (*FtpCallbackIdle)(void *arg);<br>
+</p>
+<p><a name="ftpcallbacklog"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>void (*<span style="font-weight: bold;">FtpCallbackLog</span>)(char
+*str, void* arg, bool out)<br>
+      </td>
+      <td align="right">
+      <h3><strong>FtpCallbackLog<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>[typedef]<br>
+</p>
+<p>typedef void
+(*FtpCallbackLog)(char *str, void* arg, bool out);<br/>
+<br/>
+Note: <span style="font-style: italic;">out</span> indicates wether the log information in <span style="font-style: italic;">str</span> is incoming or outgoing. </br>
+</p>
+<p><a name="ftpcallbackxfer"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int (*<span style="font-weight: bold;">FtpCallbackXfer</span>)(off64_t
+xfered, void *arg)<br>
+      </td>
+      <td align="right">
+      <h3><strong>FtpCallbackXfer<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>[typedef]<br>
+<br>
+typedef int (*FtpCallbackXfer)(off64_t xfered, void *arg);<br>
+</p>
+<p><a name="ftpcallbackcert"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>bool (*<span style="font-weight: bold;">FtpCallbackCert</span>)(void* arg, X509 *cert)<br>
+      </td>
+      <td align="right">
+      <h3><strong>FtpCallbackCert<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>[typedef]<br>
+<br>
+typedef int (*FtpCallbackCert)(void *arg, X509 *cert);<br>
+</p>
+<a name="ftplib"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td><span style="font-weight: bold;">ftplib</span>
+()<br>
+      </td>
+      <td align="right">
+      <h3><strong>ftplib<br>
+      </strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>[constructor]<br>
+</p>
+<p>Class constructor, an ftplib
+object is responsible for
+the ftp session.<br>
+</p>
+<a name="lastresponse"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>char* <strong>LastResponse
+      </strong>() <br>
+      </td>
+      <td align="right">
+      <h3><strong>LastResponse</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> LastResponse() returns a
+pointer to the last response c-styled
+string sent by the server. This can be parsed by the user program to
+determine more information about the last request or can be displayed
+along with an error message. <br>
+<br style="font-weight: bold;">
+<span style="font-weight: bold;">Returns:
+</span><br>
+</p>
+<p>LastResponse() returns a
+pointer to the last server response string.
+Otherwise, <span style="font-style: italic;">NULL</span>
+is returned. <br>
+</p>
+<a name="connect"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <span style="font-weight: bold;">Connect</span><strong></strong>
+( const char* host ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Connect</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Connect() establishes a
+connection to the FTP server on the
+specified machine and returns a handle which can be used to initiate
+data transfers. The host name should be specified as or :. may be
+either a host name or ip address. may be either a service name or a
+port number.</p>
+<p><span style="font-weight: bold;">Parameters:</span><br>
+<br>
+<span style="font-style: italic;">host</span>
+The name of the host
+machine to connect to and optionally an alternate port number to use (<span
+ style="font-style: italic;">ftp.myftp.com:321</span>).<br>
+<br>
+<span style="font-weight: bold;">Returns:
+</span><br>
+</p>
+<p>If the connection to the remote
+server if successful, Connect()
+returns 1. Otherwise, 0 is returned.&nbsp;<br>
+</p>
+<a name="login"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Login</strong>
+( const char* user, const char*
+pass) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Login</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Login() attempts to login to
+the remote system with the supplied
+username and password. </p>
+<p><span style="font-weight: bold;">Parameters:<br>
+</span><span style="font-style: italic;"><br>
+user&nbsp;</span> Specifies the
+username. <br>
+<span style="font-style: italic;">pass</span>
+Specifies the password. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+</p>
+<a name="site"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int&nbsp; <strong>Site</strong>
+( const char *cmd ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Site</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Site() sends the specified command as an argument to a 'SITE' command. <br>
+<br style="font-weight: bold;">
+<span style="font-weight: bold;">Parameters:</span><br>
+<br>
+<span style="font-style: italic;">cmd</span>
+A string containing a
+'SITE' subcommand. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<a name="raw"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <span style="font-weight: bold;">Raw</span><strong></strong>
+( const char *cmd ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Raw</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Raw() sends the specified command unmodified. <br>
+<br style="font-weight: bold;">
+<span style="font-weight: bold;">Parameters:</span><br>
+<br>
+<span style="font-style: italic;">cmd</span>
+A string containing a
+custom ftp command. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<a name="systype"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <span style="font-weight: bold;">SysType</span>
+(char *buf, int max ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SysType</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> SysType() issues a SYST
+command to the remote system and
+attempts to parse the system type out of the response and return it to
+the user's buffer.<br>
+<br>
+<span style="font-weight: bold;">Parameters:<br>
+</span><br>
+<span style="font-style: italic;">buf
+</span>A pointer to a
+buffer where the result will be returned. <br>
+<span style="font-style: italic;">max</span>
+Specifies the size of the
+user buffer. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+</p>
+<a name="mkdir"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Mkdir</strong>
+( const char* path) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Mkdir</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Mkdir() sends a make directory request to the remote system. <br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">path</span>
+Specifies the argument to
+mkdir on the remote system. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error.<br>
+<br>
+<a name="chdir"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int&nbsp; <strong>Chdir</strong>
+( const char* path) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Chdir</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Sends a change working directory request to the server using the
+specified path. <br>
+<br>
+<span style="font-weight: bold;">Parameters:</span><br>
+<br>
+<span style="font-style: italic;">path</span>
+Specifies the desired
+working directory on the server. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<a name="cdup"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Cdup</strong>
+() <br>
+      </td>
+      <td align="right">
+      <h3><strong>Cdup</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Cdup() sends a CDUP command to the remote server. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<a name="rmdir"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <span style="font-weight: bold;">Rmdir</span><strong></strong>
+( const char* path ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Rmdir</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Rmdir() sends a remove directory request to the remote server. <br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">path</span>
+A string containing the
+name of a remote directory. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<a name="pwd"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Pwd</strong>
+(char* path, int max )<br>
+      </td>
+      <td align="right">
+      <h3><strong>Pwd</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Pwd() attempts to determine the current default directory at the server
+and return it to the user's buffer. <br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">path</span>
+A pointer to a buffer
+where the result should be returned. <br>
+<span style="font-style: italic;">max</span>
+Specifies the size of the
+user's buffer. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<a name="nlst"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Nlst</strong>
+( const char* outputfile, const
+char* path ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Nlst</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Performs a short form directory listing of the specified path on the
+remote system. The results are written to the specified file.<br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">output</span>
+Specifies the name of a
+file to receive the directory listing. <br>
+<span style="font-style: italic;">path</span>
+Specifies an argument to
+'ls' on the remote system. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error.<br>
+<br>
+<a name="dir"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Dir</strong>
+( const char* outputfile, const
+char* path ) </td>
+      <td align="right">
+      <h3><strong>Dir</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Sends a 'LIST -aL' command to the server with the specified path. The
+response to this is usually a long format directory listing which will
+be written to the file named in outputfile. If outputfile is specified
+as <span style="font-style: italic;">NULL</span>,
+the list will be
+written to stdout. <br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">output</span>
+Specifies the name of a
+file to receive the directory listing. <br>
+<span style="font-style: italic;">path</span>
+Specifies an argument to
+'ls' on the remote system. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error.<br>
+<br>
+<a name="size"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Size</strong>
+( const char* path, int* size,
+transfermode mode ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Size</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Size() attempts to determine the size of a remote file. <br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">path
+</span>A pointer to a buffer
+where the result should be returned. <br>
+<span style="font-style: italic;">size</span>
+A pointer to an int where
+the size will be returned. <br>
+<span style="font-style: italic;">mode</span>
+Specifies the transfer
+mode as<span style="font-style: italic;">
+ftplib::image</span> or<span style="font-style: italic;"> ftplib::ascii</span>.
+<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+If a good response is received and the size is successfully parsed out
+of the result, 1 is returned. Otherwise, 0 is returned. <br>
+<br>
+<a name="moddate"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>ModDate</strong>
+( const char* path, char* dt,
+int max ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>ModDate</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+ModDate() attempts to determine the last access time of a remote
+file and return it to the user's buffer. The date and time are returned
+as a string in the format 'YYYYMMDDHHMMSS'.<br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">path</span>
+Name of remote file to be
+checked. <br>
+<span style="font-style: italic;">buf</span>
+A pointer to a buffer
+where the result should be returned. <br>
+<span style="font-style: italic;">max</span>
+Specifies the size of the
+user's buffer. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+If a good response is received and the date and time are successfully
+parsed out of the result, 1 is returned. Otherwise, 0 is returned. <br>
+<br>
+<a name="get"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Get</strong>
+(const char* outputfile, const char
+*path, transfermode mode ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Get</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> Get() copies the contents of a
+remote file to a local file. </p>
+<p><span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">output</span>
+Name of a local file to
+receive the contents of the remote file. <br>
+<span style="font-style: italic;">path
+</span>Name of remote file to
+be retrieved. <br>
+<span style="font-style: italic;">mode</span>
+Specifies the transfer
+mode as <span style="font-style: italic;">
+ftplib::image</span> or<span style="font-style: italic;"> ftplib::ascii</span>.<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+</p>
+<p> </p>
+<a name="get2"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>Get</strong>
+(const char* outputfile, const char *path, transfermode mode, off64_t
+offset ) </td>
+      <td align="right">
+      <h3><strong>Get</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> </p>
+<p> Get() copies the contents of a
+remote file from a given offset and
+appends it to a local file. Not all ftp servers might implement this
+feature.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">output</span>
+Name of a local file to
+receive the contents of the remote file. <br>
+<span style="font-style: italic;">path
+</span>Name of remote file to
+be retrieved. <br>
+<span style="font-style: italic;">mode</span>
+Specifies the transfer
+mode as <span style="font-style: italic;">
+ftplib::image</span> or<span style="font-style: italic;"> ftplib::ascii</span>.<br>
+<span style="font-style: italic;">offset</span>
+Point from where the
+copy begins.<br>
+</p>
+<p><span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+</p>
+<a name="put"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> int&nbsp; <strong>Put</strong>
+( const char* inputfile,
+const char *path, transfermode mode ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Put</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Put() transfers a local file to the remote system. <br>
+<span style="font-weight: bold;"><br>
+Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">input</span>
+Specifies the name of a
+local file to be transfered to the server. <br>
+<span style="font-style: italic;">path</span>
+Specifies the name to be
+given to the file on the remote system. <br>
+<span style="font-style: italic;">mode</span>
+Specifies the transfer
+mode as <span style="font-style: italic;">
+ftplib::image</span> or<span style="font-style: italic;"> ftplib::ascii</span>.<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <span
+ style="text-decoration: underline;"><br>
+<br>
+</span><a name="put2"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> int&nbsp; <strong>Put</strong>
+( const char* inputfile,
+const char *path, transfermode mode, off64_t offset ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Put</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> Put() copies the contents of a
+local file from a given offset and
+appends it
+to a remote file. Not all ftp servers might implement this feature.<br>
+<span style="font-weight: bold;"><br>
+Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">input</span>
+Specifies the name of a
+local file to be transfered to the server. <br>
+<span style="font-style: italic;">path</span>
+Specifies the name to be
+given to the file on the remote system. <br>
+<span style="font-style: italic;">mode</span>
+Specifies the transfer
+mode as <span style="font-style: italic;">
+ftplib::image</span> or<span style="font-style: italic;"> ftplib::ascii</span>.<br>
+<span style="font-style: italic;">offset</span>
+Point from where the
+copy begins.<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. </p>
+<a name="rename"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> int <strong>Rename</strong>
+( const char *src, const char
+*dst ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Rename</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+FtpRename() sends a rename request to the remote server. <br>
+<span style="font-weight: bold;"><br>
+Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">src
+</span>A string containing the
+current name of the remote file. <br>
+<span style="font-style: italic;">dst</span>
+A string containing the
+desired new name for the remote file. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<a name="delete"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> int&nbsp; <strong>Delete</strong>
+( const char *path ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>Delete</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Requests that the server remove
+the specified file
+from the remote file system.</p>
+<p><span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">path
+</span>The path to the file
+which is to be removed. <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful or 0 on error.<br>
+</p>
+<p><a name="setdataencryption"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int&nbsp; <strong>SetDataEncryption</strong>
+( dataencryption enc ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetDataEncryption</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+On an already secured ftp session, SetDataEncryption() specifies if the
+data connection channel will be secured for the next data transfer.<br>
+<br>
+<span style="font-weight: bold;">Parameters</span>:<br>
+<br>
+<span style="font-style: italic;">enc
+</span>either <span style="font-style: italic;">ftplib::unencrypted</span>
+or<span style="font-style: italic;">
+ftplib::secure</span>.<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful and 0 if the control connection isn't secure or
+on error.<br>
+<br>
+<span style="font-weight: bold;">Notes:</span><br>
+<br>
+See <a href="#negotiateencryption">NegotiateEncryption</a>.<br>
+<p><a name="negotiateencryption"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int&nbsp; <strong>NegotiateEncryption</strong>
+() <br>
+      </td>
+      <td align="right">
+      <h3><strong>NegotiateEncryption</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> This Method is to be called
+after <a href="#connect">Connect</a>
+and before <a href="#login">Login</a>
+to secure the ftp
+communication channel.<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br>
+<br>
+Returns 1 if successful and 0 if the ssl negotiation failed. <br>
+</p>
+<p><span style="font-weight: bold;">Notes:<br>
+</span></p>
+<p>The ftplib++ library uses an ssl/tls encryption approach defined in the <a
+ href="ftp://ftp.rfc-editor.org/in-notes/rfc4217.txt">RFC4217</a> standard.<span
+ style="font-weight: bold;"><br>
+</span></p>
+<a name="quit"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>void&nbsp; <strong>Quit</strong>
+() <br>
+      </td>
+      <td align="right">
+      <h3><strong>Quit</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Quit() issues a 'QUIT' command
+and closes the
+connection to the remote server.<br>
+</p>
+<p> </p>
+<a name="setcallbackxferfunction"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void&nbsp; <strong>SetCallbackXferFunction</strong>
+(
+FtpCallbackXfer pointer ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCallbackXferFunction</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>When <a href="#setcallbackbytes">SetCallbackBytes</a>
+is set to a bigger value than 0, a callback function can be called
+during an ftp data transfer. If the
+callback function returns 0, the data transfer is aborted. The callback
+function delivers two parameters <span style="font-style: italic;">int
+xfered</span> and <span style="font-style: italic;">void* arg</span>.
+<span style="font-style: italic;">xfered</span>
+is the amount of bytes yet
+transfered during the data connection and arg contains either <span
+ style="font-weight: bold;">NULL</span>
+or a custom pointer set by <a href="#setcallbackarg">SetCallbackArg.</a>
+If <span style="font-style: italic;">pointer</span>
+is specified as <span style="font-style: italic;">NULL</span>
+the xfer callback is disabled.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters:<br>
+<br>
+</span><span style="font-style: italic;">pointer</span>
+is a pointer to
+a static function of the type <a href="#ftpcallbackxfer">FtpCallbackXfer</a><span
+ style="font-style: italic;">.<br>
+</span></p>
+<p><span style="font-weight: bold;">Notes:<br>
+</span></p>
+<p>Since <span style="font-style: italic;">FtpCallbackXferFunction</span>
+only accepts pointers to static functions, it might appear quite
+pointless in an oo c++ context. However there's an easy way to use it
+anyway. Using <a href="#setcallbackarg">SetCallbackArg</a>
+you supply
+the class a pointer to the object whose method you'd like to call from
+the ftplib object. That pointer is then delivered back with the
+callback function. from the static callback function you can perform a
+cast of <span style="font-style: italic;">void*
+arg</span> to a
+pointer of the your desired object, and call its method.<br>
+<br>
+valid code could look like this:<br>
+<br>
+...<br>
+static int callback(off64_t xfered, void* arg); // static callback
+function
+defined in myclass.h<br>
+void mymethod();&nbsp; // common myclass method<br>
+...<br>
+int myclass::callback(off64_t xfered, void* arg)<br>
+{<br>
+&nbsp;&nbsp;&nbsp;
+((*myclass)(arg)-&gt;mymethod();&nbsp; // casting
+the pointers to the correct type and calling class method<br>
+&nbsp;&nbsp;&nbsp; return 1;<br>
+}<br>
+...<br>
+void myclass::mymethod()<br>
+{<br>
+&nbsp;&nbsp;&nbsp; DoSomething();<br>
+}<br>
+...<br>
+myftp.SetCallbackArg(this); // supply the myftp object the pointer to
+the current (myclass) object<br>
+myftp.SetCallbackBytes(1024); // issue a xfer callback every kb
+myftp.SetCallbackXferFunction(class::callback);<br>
+...<span style="font-weight: bold;"><br>
+</span></p>
+<a name="setcallbacklogfunction"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void&nbsp; <strong>SetCallbackLogFunction</strong>
+(
+FtpCallbackLog pointer ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCallbackLogFunction</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>SetCallbackLogFunction()
+enables the logging callback. everytime
+there's been data read from the control connection, <span
+ style="font-style: italic;">pointer</span>
+is called with a c-styled
+string and a custom pointer specified in <a href="#setcallbackarg">SetCallbackArg</a>.
+If&nbsp; <span style="font-style: italic;">pointer</span>
+is specified
+as <span style="font-style: italic;">NULL
+</span>logging callback is
+disabled.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters:<br>
+<br>
+</span><span style="font-style: italic;">pointer</span>
+is a pointer to
+a static function of the type <a href="#ftpcallbacklog">FtpCallbackLog</a><span
+ style="font-style: italic;">.<br>
+</span></p>
+<p><span style="font-weight: bold;">Notes:</span><br>
+</p>
+<p>See <a href="#setcallbackidlefunction">SetCallbackIdleFunction</a>.<span
+ style="font-style: italic;"><br>
+</span></p>
+<a name="setcallbackcertfunction"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>bool&nbsp; <strong>SetCallbackCertFunction</strong>
+(
+FtpCallbackCert pointer ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCallbackCertFunction</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>SetCallbackCertFunction()
+enables the ssl/tls certification callback. When you use encryption and you call this
+method with a certification callback function, it is called when connecting to the server. In the
+callback function you decide via the boolean return value wether the certificate is valid or not.
+Certification checking is an advanced issue, and you should read into the openssl documentation
+if you plan to implement it.<span style="font-style: italic;">pointer</span>
+is called with a custom pointer specified in <a href="#setcallbackarg">SetCallbackArg</a> and
+the Certification from the Server.
+If <span style="font-style: italic;">pointer</span>
+is specified
+as <span style="font-style: italic;">NULL
+</span>Certification callback is
+disabled.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters:<br>
+<br>
+</span><span style="font-style: italic;">pointer</span>
+is a pointer to
+a static function of the type <a href="#ftpcallbackcert">FtpCallbackCert</a><span
+ style="font-style: italic;">.<br>
+</span></p>
+<p><span style="font-weight: bold;">Notes:</span><br>
+</p>
+Sample implenantation:
+<pre>
+bool MyCallbackCert(void *arg, X509 *cert)
+{
+	if (cert == NULL) 
+	{
+		printf("Peer sent no certificate.\n");
+		return false;
+	}
+	else
+	{
+		char peer_CN[265];
+		int len;
+
+		X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, peer_CN, 256);
+		printf("subject: %s\n", peer_CN);
+
+		X509_NAME_get_text_by_NID(X509_get_issuer_name(cert), NID_commonName, peer_CN, 256);
+		printf("issuer: %s\n", peer_CN);
+	
+		return true;
+	}
+}
+</pre>
+<a name="setcallbackidlefunction"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void&nbsp; <strong>SetCallbackIdleFunction</strong>
+(
+FtpCallbackIdle pointer ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCallbackLogFunction</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>SetCallbackLogFunction()
+enables the idle callback. When a connection idles, for a period bigger
+than 0
+set in <a href="#setcallbackidletime">SetCallbackIdletime</a>
+a callback to the argument function is issued.
+</p>
+<p><span style="font-weight: bold;">Parameters:<br>
+<br>
+</span><span style="font-style: italic;">pointer</span>
+is a pointer to
+a static function of the type <a href="#ftpcallbackidle">FtpCallbackIdle</a><span
+ style="font-style: italic;">.<br>
+</span></p>
+<p><span style="font-weight: bold;">Notes:</span><br>
+</p>
+<p>See <a href="#setcallbackxferfunction">SetCallbackXferFunction</a>.<span
+ style="font-style: italic;"><br>
+</span></p>
+<a name="setcallbackarg"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void&nbsp; <strong>SetCallbackArg</strong>
+( void* arg ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCallbackArg</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>SetCallbackArg submits a
+pointer of custom type to the
+object, this pointer is returned with a callback function. A good idea
+is to store the ftplib owners (or whatever object should handle the
+callback) pointer in it to use it the way described in the <a
+ href="#setcallbackxferfunction">SetCallbackXferFunction</a>
+entry.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters:<br>
+<br>
+</span><span style="font-style: italic;">arg </span>a
+pointer of a
+custom type<span style="font-style: italic;">.<br>
+</span></p>
+<p><a name="setcallbackbytes"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void&nbsp; <strong>SetCallbackBytes</strong>
+( off64_t bytes ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCallbackBytes</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>SetCallbackBytes specifies the
+frequency of xfer callbacks. The xfer
+callback returns the amount of bytes yet transfered on this transfer.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters:<br>
+<br>
+</span><span style="font-style: italic;">bytes </span>specifies
+the
+frequency in transfered bytes. a value of 100000 would mean every
+100000 bytes an xfer callback is issued.<br>
+</p>
+<p><a name="setcallbackidletime"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void&nbsp; <strong>SetCallbackIdletime</strong>
+( int time
+) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCallbackIdletime</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p> </p>
+<p>SetCallbackIdletime specifies
+how long a data socket can idle,
+without an idle callback beeing issued.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters:<br>
+<br>
+</span><span style="font-style: italic;">time </span>time
+in msec.<br>
+</p>
+<p><span style="font-weight: bold;">Notes:</span><br>
+</p>
+The default value of 0, means that on every idle a callback happens. if
+you don't want this behaviour you have to set a (higher)
+value.&nbsp;
+<p><a name="setconnmode"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void <strong>SetConnmode</strong>
+( ftplib::ftp mode ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetConnmode</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>SetConnmode specifies which
+data connection method is
+to be used for the next data transfer.<br>
+</p>
+<p style="font-weight: bold;">Parameters:<br>
+</p>
+<p><span style="font-style: italic;">mode</span>
+either <span style="font-style: italic;">ftplib::pasv</span>
+(passive mode,
+default) or <span style="font-style: italic;">ftplib::port</span>
+(active mode).</p>
+<p><a name="setcorrectpasv"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> void <strong>SetCorrectPasv</strong>
+( bool b ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>SetCorrectPasv</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>Some Ftp-Servers, which run
+behind a NAT, return their local ip-adresses as PASV replies. when this
+option is turned on PASV replies are corrected using the ip address the
+ftp session is currently connected to.<br>
+</p>
+<p style="font-weight: bold;">Parameters:<br>
+</p>
+<p><span style="font-style: italic;">b</span>
+true turns the correction on, false turns it off.</p>
+<p><a name="fxp"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> int&nbsp; <span style="font-weight: bold;">Fxp</span>
+(&nbsp; ftplib* src, ftplib* dst, const char *pathSrc, const char
+*pathDst, ftplib::ftp mode, ftplib::ftp method )<strong></strong><br>
+      </td>
+      <td align="right">
+      <h3><strong>Fxp</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>[static]<br>
+</p>
+<p>Fxp is a static function. it
+uses two ftp session
+objects and transfer a certain file between them.</p>
+<p><span style="font-weight: bold;">Parameters:</span><br
+ style="font-weight: bold;">
+<span style="font-style: italic;"><br>
+src</span> source ftplib object.<br>
+<span style="font-style: italic;">dst</span>
+destination ftplib object.<br>
+<span style="font-style: italic;">pathSrc</span>
+path to file to be
+copied copy ("/incoming/myfile.tar.gz").<br>
+<span style="font-style: italic;">pathDst</span>
+path to file
+destination ("/pub/myfile_from_some_ftp.tar.gz");<br>
+<span style="font-style: italic;">mode</span>
+either ftplib::ascii
+(ascii) or ftplib::image (binary).<br>
+<span style="font-style: italic;">method</span>
+either
+ftplib::defaultfxp (pasv on dst, port on src) or ftplib::alternativefxp
+(pasv on src, port on dst).<br>
+</p>
+<p><span style="font-weight: bold;">Returns:<br>
+</span></p>
+<p>Returns 1 if successful, -1 if
+initilization failed
+("PORT" &amp; "PASV"), or 0 if the data transfer somehow failed.<span
+ style="font-weight: bold;"><br>
+&nbsp;<br>
+Notes:<br>
+&nbsp;<br>
+</span>Fxp - direct Ftp to Ftp
+transfer - is rather an exploit than a
+feature and might thus be prevented by many servers. Currently Fxp does
+not work with encrypted data connections, so be sure to switch to
+unencrypted data channels before performing fxp.<span
+ style="font-weight: bold;"><br>
+</span></p>
+<a name="rawread"></a>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>RawRead</strong>
+( void* buf, int max, ftphandle *handle )<br>
+      </td>
+      <td align="right">
+      <h3><strong>RawRead</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>RawRead copies up to max bytes
+of data from the specified data connection and returns it to the user's
+buffer. If the data connection was opened in ascii mode, no more than
+one line of data will be returned.<br>
+</p>
+<p><span style="font-weight: bold;">Parameters:</span><br
+ style="font-weight: bold;">
+<br>
+<span style="font-style: italic;">buf
+</span>Specifies the address of
+a buffer where received data will be written. <br>
+<span style="font-style: italic;">max</span>
+Specifies the size of the
+user's buffer. <br>
+<span style="font-style: italic;">handle</span>
+A handle returned by
+FtpAccess(). <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br
+ style="font-weight: bold;">
+<br>
+Returns the number of bytes written to the user's buffer or -1 on error
+or end of file.<br>
+</p>
+<p><a name="rawwrite"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>int <strong>RawWrite</strong>
+( void* buf, int len, ftphandle *handle ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>RawWrite</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>RawWrite() sends data to a
+remote file. If the file were
+accessed in record mode, the necessary conversions are performed.</p>
+<p><span style="font-weight: bold;">Parameters:</span><br
+ style="font-weight: bold;">
+<br>
+<span style="font-style: italic;">buf</span>
+A buffer containing the data to be sent to the remote file. <br>
+<span style="font-style: italic;">len</span>
+The number of bytes to be sent from 'buf'. <br>
+<span style="font-style: italic;">handle</span>
+A handle returned by RawOpen(). <br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br
+ style="font-weight: bold;">
+<br>
+Returns the number of bytes sent from the user's buffer or -1 on error.
+<br>
+</p>
+<p><a name="rawopen"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td>ftphandle* <span style="font-weight: bold;">RawOpen</span>(
+const char *path, accesstype type, transfermode mode )<br>
+      </td>
+      <td align="right">
+      <h3><strong>RawOpen</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<p>RawOpen() opens a remote file
+or directory and
+returns a handle for the calling program to use to transfer data.</p>
+<p style="font-weight: bold;">Parameters:<br>
+</p>
+<p><span style="font-style: italic;">path</span>
+Specifies
+the name of the remote file or directory to open. <br>
+<span style="font-style: italic;">type</span>
+Specifies the type of
+transfer to be performed. <span style="font-style: italic;">ftplib::dir</span>
+performs a terse directory.
+<span style="font-style: italic;">ftplib::dirverbose</span>
+performs a verbose directory. <span style="font-style: italic;">ftplib::fileread</span>
+opens
+a remote file for reading. <span style="font-style: italic;">ftplib::filewrite</span>
+creates a remote file and
+readies it for writing. <span style="font-style: italic;">ftplib::filewriteappend</span>
+and <span style="font-style: italic;">ftplib::filereadappend</span>
+are for appending file operations.<br>
+<span style="font-style: italic;">mode</span>
+Specifies the transfer
+mode as <span style="font-style: italic;">ftplib::ascii</span>
+or <span style="font-style: italic;">ftplib::image</span>.<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br
+ style="font-weight: bold;">
+<br>
+Returns 1 if successful or 0 on error. <br>
+</p>
+<p><a name="rawclose"></a></p>
+<table width="100%">
+  <tbody>
+    <tr bgcolor="#dddddd">
+      <td> int <strong>RawClose</strong>
+( ftphandle* handle ) <br>
+      </td>
+      <td align="right">
+      <h3><strong>RawClose</strong></h3>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br>
+Closes the data connection specified by <span
+ style="font-style: italic;">handle</span>
+and frees associated
+resources.<br>
+<br>
+<span style="font-weight: bold;">Parameters:</span><br>
+<br>
+<span style="font-style: italic;">handle</span>
+A handle returned by
+RawOpen().<br>
+<br>
+<span style="font-weight: bold;">Returns:</span><br
+ style="font-weight: bold;">
+<br>
+Returns 1 if successful or 0 on error. <br>
+<br>
+<hr>
+<div align="center"><small>Documentation last updated on 05.04.2005 by Magnus Kulke.</small></div>
+</body>
+</html>
