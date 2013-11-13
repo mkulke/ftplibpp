@@ -67,36 +67,6 @@ large file support, or logging to fit todays standards.
 
 ## Details
 
-<a name="accesstype" />
-
-###enum accesstype { dir = 1, dirverbose, fileread, filewrite, filereadappend, filewriteappend };
-
-This type is used in [RawOpen](#rawopen).
-
-<a name="transfermode" />
-
-###enum transfermode { ascii = 'A', image = 'I' }; 
-
-This type determines how data is transferred.
-
-<a name="connmode" />
-
-###enum connmode { pasv = 1, port }; 
-
-This type determines wether data is to be transferred using the pasv or active mode.
-
-<a name="fxpmethod" />
-
-###enum fxpmethod { defaultfxp = 0, alternativefxp };
-
-This type is used in the Fxp method.
-
-<a name="dataencryption" />
-
-###enum dataencryption { unencrypted = 0, secure };
-
-This type determines wether data is encrypted or not.
-
 <a name="ftpcallbackidle" />
 
 ###int (* FtpCallbackIdle )(void *arg) 
@@ -132,6 +102,36 @@ typedef int (*FtpCallbackXfer)(off64_t xfered, void *arg);
 [typedef]
 
 typedef int (*FtpCallbackCert)(void *arg, X509 *cert);
+
+<a name="accesstype" />
+
+###enum accesstype { dir = 1, dirverbose, fileread, filewrite, filereadappend, filewriteappend };
+
+This type is used in [RawOpen](#rawopen).
+
+<a name="transfermode" />
+
+###enum transfermode { ascii = 'A', image = 'I' }; 
+
+This type determines how data is transferred.
+
+<a name="connmode" />
+
+###enum connmode { pasv = 1, port }; 
+
+This type determines wether data is to be transferred using the pasv or active mode.
+
+<a name="fxpmethod" />
+
+###enum fxpmethod { defaultfxp = 0, alternativefxp };
+
+This type is used in the Fxp method.
+
+<a name="dataencryption" />
+
+###enum dataencryption { unencrypted = 0, secure };
+
+This type determines wether data is encrypted or not.
 
 <a name="ftplib" />
 
