@@ -403,6 +403,7 @@ Requests that the server remove the specified file from the remote file system.
 Returns 1 if successful or 0 on error.
 
 <a name="setdataencryption" />
+
 ###int SetDataEncryption ( dataencryption enc )
 
 On an already secured ftp session, SetDataEncryption() specifies if the data connection channel will be secured for the 
@@ -419,6 +420,8 @@ Returns 1 if successful and 0 if the control connection isn't secure or on error
 ####Notes: 
 
 See [NegotiateEncryption](#negotiateencryption)
+
+<a name="negotiateencryption" />
 
 ###int NegotiateEncryption () 
 
