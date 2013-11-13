@@ -33,10 +33,13 @@
 # define DLLIMPORT __declspec (dllimport)
 #endif /* Not BUILDING_DLL */
 
+#include <time.h>
 #endif
 
-#include <sys/time.h>
+#ifndef _WIN32
 #include <unistd.h>
+#include <sys/time.h>
+#endif
 
 #ifdef NOLFS
 #define off64_t long

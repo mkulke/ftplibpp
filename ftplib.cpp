@@ -44,6 +44,11 @@
 typedef int socklen_t;
 #endif
 
+#if defined(_WIN32)
+#define memccpy _memccpy
+#define strdup _strdup
+#endif
+
 using namespace std;
 
 /* socket values */
