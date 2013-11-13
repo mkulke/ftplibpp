@@ -8,6 +8,18 @@ large file support, or logging to fit todays standards.
 
 ## Documentation
 
+ftplibpp provides a c++ class providing ftp client functionality. It supports all basic ftp functionality plus some 
+advanced features like resuming, fxp, ssl/tls encryption, large file support, or logging to fit todays standards. The 
+very base of ftplibpp is Thomas Pfau's [ftplib c library](http://nbpfaus.net/%7Epfau/ftplib/).
+
+Every ftp session is represented by an ftplib object, whose methods are called to communicate with the ftp server. The 
+ftp sessions should begin with a call to *myftp.Connect("myftp.org:21")* (and maybe *myftp.NegotiateEncryption()* ), be 
+followed with *myftp.Login("myuser","mypass")* and ended by *myftp.Quit()*. For the magic in between, read the class 
+methods documentation. Most methods have their tasks pretty much explained in their name. ftplibpp uses OpenSSL for 
+encryption functionality, if you don't need it you can set the "NOSSL" flag (e.g. g++ -c ftplib.cpp -DNOSSL ). If your 
+system does not feature large file support (or does not need specific LFS functions, because it's built in yet) you can 
+use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ).
+
 ### Public types
 
 * [int (* FtpCallbackIdle )(void *arg)](#ftpcallbackidle)
