@@ -65,6 +65,43 @@ large file support, or logging to fit todays standards.
 
 * [static int Fxp (ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method)](#fxp)
 
+## Details
+
+<a name="ftpcallbackidle" />
+
+###int (* FtpCallbackIdle )(void *arg) 
+
+[typedef] 
+
+typedef int (*FtpCallbackIdle)(void *arg);
+
+<a name="ftpcallbacklog" />
+
+###void (* FtpCallbackLog )(char *str, void* arg, bool out)
+
+[typedef]
+
+typedef void (* FtpCallbackLog)(char *str, void* arg, bool out); 
+
+####Notes: 
+
+*out* indicates wether the log information in *str* is incoming or outgoing.
+
+<a name="ftpcallbackxfer" />
+
+###int (* FtpCallbackXfer )(off64_t xfered, void *arg)
+
+[typedef] 
+
+typedef int (*FtpCallbackXfer)(off64_t xfered, void *arg);
+
+<a name="ftpcallbackcert" />
+
+###bool (* FtpCallbackCert )(void* arg, X509 *cert)
+
+[typedef]
+
+typedef int (*FtpCallbackCert)(void *arg, X509 *cert);
 
 <a name="ftplib" />
 
