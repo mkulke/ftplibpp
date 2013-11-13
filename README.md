@@ -66,7 +66,7 @@ large file support, or logging to fit todays standards.
 * [static int Fxp (ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method)](#fxp)
 
 
-<a href="ftplib" />
+<a name="ftplib" />
 
 ###ftplib()
     
@@ -74,7 +74,7 @@ large file support, or logging to fit todays standards.
       
 Class constructor, an ftplib object is responsible for the ftp session.
     
-<a href="lastresponse" />
+<a name="lastresponse" />
 
 ###char* LastResponse()
       
@@ -85,1731 +85,190 @@ user program todetermine more information about the last request or can be displ
       
 LastResponse() returns a pointer to the last server response string. Otherwise, NULL is returned. 
       
-<a href="connect" />
+<a name="connect" />
 
-###int Connect (const char* host)
+###int Connect ( const char* host )
 
 Connect() establishes a connection to the FTP server on the specified machine and returns a handle which can be used to 
-initiate data transfers. The host name should be specified as or :. may be either a host name or ip address. may be either a service name or a
-port number.
+initiate data transfers. The host name should be specified in the form of <host>:<port>. <host> may be either a host name or ip 
+address. <port> may be either a service name or a port number.
     
-    
-      
-        Parameters:
-      
-      
-      
-      
-        host
-      
-      The name of the host
-      machine to connect to and optionally an alternate port number to use (
-      
-        ftp.myftp.com:321
-      
-      ).
-      
-      
-      
-        Returns:
-      
-      
-    
-    
-      If the connection to the remote
-      server if successful, Connect()
-      returns 1. Otherwise, 0 is returned. 
-      
-    
-  <a href="login" />
-
-    
-    
-      int 
-      
-        Login
-      
-      ( const char* user, const char*
-      pass) 
-    
-    
-      Login() attempts to login to
-      the remote system with the supplied
-      username and password. 
-    
-    
-      
-        Parameters:
-      
-      
-      
-      
-        user 
-      
-      Specifies the
-      username. 
-      
-      
-        pass
-      
-      Specifies the password. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-      
-    
-  <a href="site" />
-
-    
-    
-      int  
-      
-        Site
-      
-      ( const char *cmd ) 
-    
-    
-      Site() sends the specified command as an argument to a 'SITE' command.
-    
+####Parameters:
      
+*host:* The name of the host machine to connect to and optionally an alternate port number to use (ftp.myftp.com:321).
       
-        Parameters:
+####Returns:
       
+If the connection to the remote server if successful, Connect() returns 1. Otherwise, 0 is returned. 
       
-      
-      
-        cmd
-      
-      A string containing a
-      'SITE' subcommand. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
-    
-      
-    
-    
-      int 
-      
-        Raw
-      
-      ( const char *cmd ) 
-    
-    
-      Raw() sends the specified command unmodified. 
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        cmd
-      
-      A string containing a
-      custom ftp command. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
-  <a href="systype" />
+<a name="login" />
 
-    
-    
-      int 
-      
-        SysType
-      
-      (char *buf, int max )
-    
-    
-      SysType() issues a SYST
-      command to the remote system and
-      attempts to parse the system type out of the response and return it to
-      the user's buffer.
-      
-      
-      
-        Parameters:
-        
-      
-      
-      
-        buf
-      
-      A pointer to a
-      buffer where the result will be returned. 
-      
-      
-        max
-      
-      Specifies the size of the
-      user buffer. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-      
-    
-  <a href="mkdir" />
+###int Login( const char* user, const char* pass )
 
+Login() attempts to login to
+the remote system with the supplied
+username and password. 
     
-    
-        int 
-        
-          Mkdir
-        
-        ( const char* path) 
-    
-    
-      Mkdir() sends a make directory request to the remote system. 
+####Parameters:
       
-      
-      
-        Parameters:
-      
-      
-      
-      
-        path
-      
-      Specifies the argument to
-      mkdir on the remote system. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error.
-    
-  <a href="chdir" />
+*user:* Specifies the username.
 
-    
-    
-      int  
+*pass:* Specifies the user's password.
       
-        Chdir
-      
-      ( const char* path) 
-    
-    
-      Sends a change working directory request to the server using the
-      specified path. 
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        path
-      
-      Specifies the desired
-      working directory on the server. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
-  <a href="" />
-
-    
-      
-    
-    
-      int 
-      
-        Cdup
-      
-      () 
-    
-    
-      Cdup() sends a CDUP command to the remote server. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
-  <a href="rmdir" />
-
-    
-    
-      int 
-      
-        Rmdir
-      
-      ( const char* path ) 
-    
-    
-      Rmdir() sends a remove directory request to the remote server. 
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        path
-      
-      A string containing the
-      name of a remote directory. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-      
-  <a href="pwd" />
-
-    
-    
-      int 
-      
-        Pwd
-      
-      (char* path, int max )
-    
-    
-      Pwd() attempts to determine the current default directory at the server
-      and return it to the user's buffer. 
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        path
-      
-      A pointer to a buffer
-      where the result should be returned. 
-      
-      
-        max
-      
-      Specifies the size of the
-      user's buffer. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
-  <a href="nlst" />
-
-    
-    
-      int 
-      
-        Nlst
-      
-      ( const char* outputfile, const
-      char* path ) 
-    
-    
-      Performs a short form directory listing of the specified path on the
-      remote system. The results are written to the specified file.
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        output
-      
-      Specifies the name of a
-      file to receive the directory listing. 
-      
-      
-        path
-      
-      Specifies an argument to
-      'ls' on the remote system. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error.
-    
-  <a href="dir" />
-
-    
-    
-      int 
-      
-        Dir
-      
-      ( const char* outputfile, const
-      char* path )
-    
-    
-      Sends a 'LIST -aL' command to the server with the specified path. The
-      response to this is usually a long format directory listing which will
-      be written to the file named in outputfile. If outputfile is specified
-      as 
-      
-        NULL
-      
-      ,
-      the list will be
-      written to stdout. 
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        output
-      
-      Specifies the name of a
-      file to receive the directory listing. 
-      
-      
-        path
-      
-      Specifies an argument to
-      'ls' on the remote system. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error.
-    
-  <a href="size" />
-
-    
-    
-      int 
-      
-        Size
-      
-      ( const char* path, int* size,
-      transfermode mode )
-    
-    
-      Size() attempts to determine the size of a remote file. 
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        path
-      
-      A pointer to a buffer
-      where the result should be returned. 
-      
-      
-        size
-      
-      A pointer to an int where
-      the size will be returned. 
-      
-      
-        mode
-      
-      Specifies the transfer
-      mode as
-      
-        ftplib::image
-      
-      or
-      
-        ftplib::ascii
-      .
-      
-      
-      
-        Returns:
-      
-      
-      
-      If a good response is received and the size is successfully parsed out
-      of the result, 1 is returned. Otherwise, 0 is returned. 
-    
-  <a href="moddate" />
-
-    
-    
-      int 
-      
-        ModDate
-      
-      ( const char* path, char* dt,
-      int max ) 
-    
-    
-      ModDate() attempts to determine the last access time of a remote
-      file and return it to the user's buffer. The date and time are returned
-      as a string in the format 'YYYYMMDDHHMMSS'.
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        path
-      
-      Name of remote file to be
-      checked. 
-      
-      
-        buf
-      
-      A pointer to a buffer
-      where the result should be returned. 
-      
-      
-        max
-      
-      Specifies the size of the
-      user's buffer. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      If a good response is received and the date and time are successfully
-      parsed out of the result, 1 is returned. Otherwise, 0 is returned. 
-    
-  <a href="get" />
-
-    
-    
-      int 
-      
-        Get
-      
-      (const char* outputfile, const char
-      *path, transfermode mode ) 
-    
-    
-      Get() copies the contents of a
-      remote file to a local file. 
-    
-    
-      
-        Parameters:
-      
-      
-      
-      
-        output
-      
-      Name of a local file to
-      receive the contents of the remote file. 
-      
-      
-        path
-      
-      Name of remote file to
-      be retrieved. 
-      
-      
-        mode
-      
-      Specifies the transfer
-      mode as 
-      
-        ftplib::image
-      
-      or
-      
-        ftplib::ascii
-      .
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-      
-    
-  <a href="get2" />
-
-    
-    
-      int 
-      
-        Get
-      
-      (const char* outputfile, const char *path, transfermode mode, off64_t
-      offset ) 
-    
-    
-      Get() copies the contents of a
-      remote file from a given offset and
-      appends it to a local file. Not all ftp servers might implement this
-      feature.
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        output
-      
-      Name of a local file to
-      receive the contents of the remote file. 
-      
-      
-        path
-      
-      Name of remote file to
-      be retrieved. 
-      
-      
-        mode
-      
-      Specifies the transfer
-      mode as 
-      
-        ftplib::image
-      
-      or
-      
-        ftplib::ascii
-      
-      .
-      
-      
-        offset
-      
-      Point from where the
-      copy begins.
-      
-    
-    
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-      
-    
-  <a href="put" />
-
-    
-    
-      int  
-      
-        Put
-      
-      ( const char* inputfile,
-      const char *path, transfermode mode )
-    
-    
-    Put() transfers a local file to the remote system. 
-    
-    
-    
-      Parameters:
-    
-      
-    
-    
-      input
-    
-    Specifies the name of a
-    local file to be transfered to the server. 
-    
-    
-      path
-    
-    Specifies the name to be
-    given to the file on the remote system. 
-    
-    
-      mode
-    
-    Specifies the transfer
-    mode as 
-    
-      ftplib::image
-    
-    or
-    
-      ftplib::ascii
-    .
-    
-    
-    
-      Returns:
-    
-    
-    
-    Returns 1 if successful or 0 on error.
-  <a href="put2" />
-
-    
-    
-      int  
-      
-        Put
-      
-      ( const char* inputfile,
-      const char *path, transfermode mode, off64_t offset )
-    
-    
-      Put() copies the contents of a
-      local file from a given offset and
-      appends it
-      to a remote file. Not all ftp servers might implement this feature.
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        input
-      
-      Specifies the name of a
-      local file to be transfered to the server. 
-      
-      
-        path
-      
-      Specifies the name to be
-      given to the file on the remote system. 
-      
-      
-        mode
-      
-      Specifies the transfer
-      mode as 
-      
-        ftplib::image
-      
-      or
-      
-        ftplib::ascii
-      .
-      
-      
-        offset
-      
-      Point from where the
-      copy begins.
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
-  <a href="rename" />
-
-    
-    
-      int 
-      
-        Rename
-      
-      ( const char *src, const char
-      *dst )
-    
-    
-      FtpRename() sends a rename request to the remote server. 
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        src
-      
-      A string containing the
-      current name of the remote file. 
-      
-      
-        dst
-      
-      A string containing the
-      desired new name for the remote file. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
-  <a href="delete" />
-
-    
-    
-      int  
-      
-        Delete
-      
-      ( const char *path )
-    
-    
-      Requests that the server remove
-      the specified file
-      from the remote file system.
-    
-    
-      
-        Parameters:
-      
-      
-      
-      
-        path
-      
-      The path to the file
-      which is to be removed. 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error.
-      
-    
-  <a href="setdataencryption" />
-
-    
-    
-      int
-      
-        SetDataEncryption
-      
-      ( dataencryption enc )
-    
-    
-      On an already secured ftp session, SetDataEncryption() specifies if the
-      data connection channel will be secured for the next data transfer.
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        enc
-      
-      either 
-      
-        ftplib::unencrypted
-      
-      or
-      
-        ftplib::secure.
-      
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful and 0 if the control connection isn't secure or
-      on error.
-      
-      
-      
-        Notes:
-      
-      
-      
-      See 
-      NegotiateEncryption.
-    
-  <a href="negotiateencryption" />
-
-    
-    
-      int  
-      
-        NegotiateEncryption
-      
-      ()
-    
-    
-      This Method is to be called
-      after 
-      Connect
-      and before 
-      Login
-      to secure the ftp
-      communication channel.
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful and 0 if the ssl negotiation failed. 
-    
-    
-      
-        Notes:
-      
-    
-    
-      The ftplibpp library uses an ssl/tls encryption approach defined in the 
-      
-        RFC4217
-      
-      standard.
-    
-  <a href="quit" />
-
-    
-    
-      void  
-      
-        Quit
-      
-      () 
-    
-    
-      Quit() issues a 'QUIT' command
-      and closes the
-      connection to the remote server.
-      
-    
-  <a href="setcallbackxferfunction" />
-
-    
-    
-      void  
-      
-        SetCallbackXferFunction
-      
-      (
-      FtpCallbackXfer pointer ) 
-    
-    
-      When 
-      SetCallbackBytes
-      is set to a bigger value than 0, a callback function can be called
-      during an ftp data transfer. If the
-      callback function returns 0, the data transfer is aborted. The callback
-      function delivers two parameters 
-      
-        int
-        xfered
-      
-      and 
-      
-        void* arg
-      
-      .
-      
-        xfered
-      
-      is the amount of bytes yet
-      transfered during the data connection and arg contains either 
-      
-        NULL
-      
-      or a custom pointer set by 
-      
-        SetCallbackArg.
-      
-      If 
-      
-        pointer
-      
-      is specified as 
-      
-        NULL
-      
-      the xfer callback is disabled.
-      
-    
-    
-      
-        Parameters:
-      
-      
-      
-      
-        pointer
-      
-      is a pointer to
-      a static function of the type 
-      FtpCallbackXfer.
-      
-    
-    
-      
-        Notes:
-      
-    
-    
-      Since 
-      
-        FtpCallbackXferFunction
-      
-      only accepts pointers to static functions, it might appear quite
-      pointless in an oo c++ context. However there's an easy way to use it
-      anyway. Using 
-      SetCallbackArg
-      you supply the class a pointer to the object the method of which you'd like to call from
-      the ftplib object. That pointer is then delivered back with the
-      callback function. from the static callback function you can perform a
-      cast of 
-      
-        void*
-        arg
-      
-      to a
-      pointer of the your desired object, and call its method.
-      
-      
-      valid code could look like this:
-      
-      
-      
-...
-static int callback(off64_t xfered, void* arg); // static callback function defined in myclass.h
-void mymethod();  // common myclass method
-...
-int myclass::callback(off64_t xfered, void* arg)
-{
-  ((*myclass)(arg)->mymethod();  // casting the pointers to the correct type and calling class method
-  return 1;
-}
-...
-void myclass::mymethod()
-{
-  DoSomething();
-}
-...
-myftp.SetCallbackArg(this); // supply the myftp object the pointer to the current (myclass) object
-myftp.SetCallbackBytes(1024); // issue a xfer callback every kb
-myftp.SetCallbackXferFunction(class::callback);
-...
-      
-    
-  <a href="setcallbacklogfunction" />
-
-    
-    
-      void  
-      
-        SetCallbackLogFunction
-      
-      (
-      FtpCallbackLog pointer ) 
-    
-    
-      SetCallbackLogFunction()
-      enables the logging callback. everytime
-      there's been data read from the control connection, 
-      
-        pointer
-      
-      is called with a c-styled
-      string and a custom pointer specified in 
-      SetCallbackArg
-      .
-      If  
-      
-        pointer
-      
-      is specified
-      as 
-      
-        NULL
-      
-      logging callback is
-      disabled.
-      
-    
-    
-      
-        Parameters:
-      
-      
-      
-      
-        pointer
-      
-      is a pointer to
-      a static function of the type 
-      FtpCallbackLog
-      .
-    
-    
-      
-        Notes:
-      
-    
-    
-      See 
-      SetCallbackIdleFunction.
-    
-  <a href="setcallbackcertfunction" />
-
-    
-    
-      bool  
-      
-        SetCallbackCertFunction
-      
-      ( FtpCallbackCert pointer ) 
-    
-    
-      SetCallbackCertFunction()
-      enables the ssl/tls certification callback. When you use encryption and you call this
-      method with a certification callback function, it is called when connecting to the server. In the
-      callback function you decide via the boolean return value wether the certificate is valid or not.
-      Certification checking is an advanced issue, and you should read into the openssl documentation
-      if you plan to implement it.
-      
-        pointer
-      
-      is called with a custom pointer specified in 
-      SetCallbackArg
-      and
-      the Certification from the Server.
-      If 
-      
-        pointer
-      
-      is specified
-      as 
-      
-        NULL
-      
-      Certification callback is
-      disabled.
-      
-    
-    
-      
-        Parameters:
-        
-        
-      
-      
-        pointer
-      
-      is a pointer to
-      a static function of the type 
-      FtpCallbackCert
-      
-        .
-        
-      
-    
-    
-      
-        Notes:
-      
-      
-    
-    Sample implementation:
-    
-bool MyCallbackCert(void *arg, X509 *cert)
-{
-  if (cert == NULL) 
-  {
-    printf("Peer sent no certificate.\n");
-    return false;
-  }
-  else
-  {
-    char peer_CN[265];
-    int len;
-    X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, peer_CN, 256);
-    printf("subject: %s\n", peer_CN);
-    X509_NAME_get_text_by_NID(X509_get_issuer_name(cert), NID_commonName, peer_CN, 256);
-    printf("issuer: %s\n", peer_CN);
-    return true;
-  }
-}
-    
-    
-      
-    
-    
-      void  
-      
-        SetCallbackIdleFunction
-      
-      (
-      FtpCallbackIdle pointer )
-    
-    
-      SetCallbackLogFunction()
-      enables the idle callback. When a connection idles, for a period bigger
-      than 0
-      set in 
-      SetCallbackIdletime
-      a callback to the argument function is issued.
-    
-    
-      
-        Parameters:
-        
-        
-      
-      
-        pointer
-      
-      is a pointer to
-      a static function of the type 
-      FtpCallbackIdle
-      
-        .
-        
-      
-    
-    
-      
-        Notes:
-      
-      
-    
-    
-      See 
-      SetCallbackXferFunction.
-      
-    
-  <a href="setcallbackarg" />
-
-    
-    
-      void  
-      
-        SetCallbackArg
-      
-      ( void* arg )
-    
-    
-      SetCallbackArg submits a
-      pointer of custom type to the
-      object, this pointer is returned with a callback function. A good idea
-      is to store the ftplib owners (or whatever object should handle the
-      callback) pointer in it to use it the way described in the 
-      SetCallbackXferFunction
-      entry.
-      
-    
-    
-      
-        Parameters:
-        
-        
-      
-      
-        arg 
-      
-      a
-      pointer of a
-      custom type
-      
-        .
-        
-      
-    
-  <a href="setcallbackbytes" />
-
-    
-    
-      void  
-      
-        SetCallbackBytes
-      
-      ( off64_t bytes ) 
-    
-    
-      SetCallbackBytes specifies the
-      frequency of xfer callbacks. The xfer
-      callback returns the amount of bytes yet transfered on this transfer.
-      
-    
-    
-      
-        Parameters:
-        
-        
-      
-      
-        bytes 
-      
-      specifies
-      the
-      frequency in transfered bytes. a value of 100000 would mean every
-      100000 bytes an xfer callback is issued.
-      
-    
-  <a href="setcallbackidletime" />
-
-    
-    
-      void  
-      
-        SetCallbackIdletime
-      
-      ( int time
-      ) 
-    
-    
-      SetCallbackIdletime specifies
-      how long a data socket can idle,
-      without an idle callback beeing issued.
-      
-    
-    
-      
-        Parameters:
-        
-        
-      
-      
-        time 
-      
-      time
-      in msec.
-      
-    
-    
-      
-        Notes:
-      
-      
-    
-    The default value of 0, means that on every idle a callback happens. if
-    you don't want this behaviour you have to set a (higher)
-    value. 
-  <a href="setconnmode" />
-
-    
-    
-      void 
-      
-        SetConnmode
-      
-      ( ftplib::ftp mode ) 
-    
-    
-      SetConnmode specifies which
-      data connection method is
-      to be used for the next data transfer.
-      
-    
-    
-      Parameters:
-      
-    
-    
-      
-        mode
-      
-      either 
-      
-        ftplib::pasv
-      
-      (passive mode,
-      default) or 
-      
-        ftplib::port
-      
-      (active mode).
-    
-  <a href="setcorrectpasv" />
-
-    
-    
-      void 
-      
-        SetCorrectPasv
-      
-      ( bool b ) 
-    
-    
-      Some Ftp-Servers, which run
-      behind a NAT, return their local ip-adresses as PASV replies. when this
-      option is turned on PASV replies are corrected using the ip address the
-      ftp session is currently connected to.
-      
-    
-    
-      Parameters:
-      
-    
-    
-      
-        b
-      
-      true turns the correction on, false turns it off.
-    
-  <a href="fxp" />
-
-    
-    
-      int
-        Fxp
-      
-      ( ftplib* src, ftplib* dst, const char *pathSrc, const char
-      *pathDst, ftplib::ftp mode, ftplib::ftp method )
-    
-    
-      [static]
-      
-    
-    
-      Fxp is a static function. it
-      uses two ftp session
-      objects and transfer a certain file between them.
-    
-    
-      
-        Parameters:
-      
-      
-      
-      
-        src
-      
-      source ftplib object.
-      
-      
-        dst
-      
-      destination ftplib object.
-      
-      
-        pathSrc
-      
-      path to file to be
-      copied copy ("/incoming/myfile.tar.gz").
-      
-      
-        pathDst
-      
-      path to file
-      destination ("/pub/myfile_from_some_ftp.tar.gz");
-      
-      
-        mode
-      
-      either ftplib::ascii
-      (ascii) or ftplib::image (binary).
-      
-      
-        method
-      
-      either
-      ftplib::defaultfxp (pasv on dst, port on src) or ftplib::alternativefxp
-      (pasv on src, port on dst).
-      
-    
-    
-      
-        Returns:
-      
-      
-    
-    
-      Returns 1 if successful, -1 if
-      initilization failed
-      ("PORT" and "PASV"), or 0 if the data transfer somehow failed.
-      
-        
-        
-        Notes:
-        
-        
-      
-      Fxp - direct Ftp to Ftp
-      transfer - is rather an exploit than a
-      feature and might thus be prevented by many servers. Currently Fxp does
-      not work with encrypted data connections, so be sure to switch to
-      unencrypted data channels before performing fxp.
-      
-    
-  <a href="rawread" />
-
-    
-    
-      int 
-      
-        RawRead
-      
-      ( void* buf, int max, ftphandle *handle )
-    
-    
-      RawRead copies up to max bytes
-      of data from the specified data connection and returns it to the user's
-      buffer. If the data connection was opened in ascii mode, no more than
-      one line of data will be returned.
-      
-    
-    
-      
-        Parameters:
-      
-      
-      
-      
-        buf
-      
-      Specifies the address of
-      a buffer where received data will be written. 
-      
-      
-        max
-      
-      Specifies the size of the
-      user's buffer. 
-      
-      
-        handle
-      
-      A handle returned by
-      FtpAccess(). 
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns the number of bytes written to the user's buffer or -1 on error
-      or end of file.
-      
-    
-  <a href="rawwrite" />
-
-    
-      
-        int 
-        
-          RawWrite
-        
-        ( void* buf, int len, ftphandle *handle ) 
-      
-      
-        RawWrite() sends data to a
-        remote file. If the file were
-        accessed in record mode, the necessary conversions are performed.
-      
-      
-        
-          Parameters:
-        
-        
-        
-        
-          buf
-        
-        A buffer containing the data to be sent to the remote file. 
-        
-          len
-        
-        The number of bytes to be sent from 'buf'. 
-        
-        
-          handle
-        
-        A handle returned by RawOpen(). 
-        
-        
-        
-          Returns:
-        
-        
-        
-        Returns the number of bytes sent from the user's buffer or -1 on error.
-        
-      
-  <a href="rawopen" />
-
-    
-    
-      ftphandle* 
-      
-        RawOpen
-      
-      (
-      const char *path, accesstype type, transfermode mode )
-    
-    
-      RawOpen() opens a remote file
-      or directory and
-      returns a handle for the calling program to use to transfer data.
-    
-    
-      Parameters:
-    
-    
-    
-      
-        path
-      
-      Specifies
-      the name of the remote file or directory to open. 
-      
-      
-        type
-      
-      Specifies the type of
-      transfer to be performed. 
-      
-        ftplib::dir
-      
-      performs a terse directory.
-      
-        ftplib::dirverbose
-      
-      performs a verbose directory. 
-      
-        ftplib::fileread
-      
-      opens
-      a remote file for reading. 
-      
-        ftplib::filewrite
-      
-      creates a remote file and
-      readies it for writing. 
-      
-        ftplib::filewriteappend
-      
-      and 
-      
-        ftplib::filereadappend
-      
-      are for appending file operations.
-      
-      
-        mode
-      
-      Specifies the transfer
-      mode as 
-      
-        ftplib::ascii
-      
-      or 
-      
-        ftplib::image.
-      
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-      
-    
-  <a href="rawclose" />
-
-    
-    
-      int 
-      
-        RawClose
-      
-      ( ftphandle* handle )
-    
-    
-      Closes the data connection specified by 
-      
-        handle
-      
-      and frees associated
-      resources.
-      
-      
-      
-        Parameters:
-      
-      
-      
-      
-        handle
-      
-      A handle returned by
-      RawOpen().
-      
-      
-      
-        Returns:
-      
-      
-      
-      Returns 1 if successful or 0 on error. 
-    
+####Returns:
   
+Returns 1 if successful or 0 on error. 
+      
+<a name="site" />
+
+###int Site( const char *cmd )
+    
+Site() sends the specified command as an argument to a 'SITE' command.
+    
+####Parameters:   
+      
+*cmd:* A string containing a 'SITE' subcommand. 
+
+####Returns:
+
+Returns 1 if successful or 0 on error. 
+    
+<a name="raw" />
+
+###int Raw ( const char *cmd )  
+    
+Raw() sends the specified command unmodified. 
+      
+####Parameters:
+
+*cmd:* A string containing a custom ftp command. 
+      
+####Returns:
+      
+Returns 1 if successful or 0 on error. 
+    
+<a name="systype" />
+
+###int SysType ( char *buf, int max )
+    
+SysType() issues a SYST command to the remote system and attempts to parse the system type out of the response and return
+it to the user's buffer.
+
+####Parameters:   
+
+*buf:* A pointer to a buffer where the result will be returned to. 
+
+*max:* Specifies the size of the user buffer.
+      
+####Returns:
+      
+Returns 1 if successful or 0 on error. 
+      
+<a name="mkdir" />
+
+###int Mkdir ( const char* path)
+
+Mkdir() sends a make directory request to the remote system. 
+
+####Parameters: 
+
+*path:* Specifies the argument to mkdir on the remote system.
+
+####Returns:
+
+Returns 1 if successful or 0 on error.
+
+<a name="chdir" />
+
+###int Chdir ( const char* path)
+
+Sends a change working directory request to the server using the specified path.
+
+####Parameters: 
+
+*path:* Specifies the desired working directory on the server.
+
+Returns: 
+
+Returns 1 if successful or 0 on error.
+
+<a name="cdup" />
+
+###int Cdup ()
+
+Cdup() sends a CDUP command to the remote server. 
+
+####Returns: 
+
+Returns 1 if successful or 0 on error.
+
+<a name="rmdir" />
+
+###int Rmdir ( const char* path )
+
+Rmdir() sends a remove directory request to the remote server. 
+
+####Parameters: 
+
+*path:* A string containing the name of a remote directory. 
+
+####Returns: 
+
+Returns 1 if successful or 0 on error.
+
+<a name="pwd" />
+
+###int Pwd (char* path, int max )
+
+Pwd() attempts to determine the current default directory at the server and return it to the user's buffer.
+
+####Parameters: 
+
+*path:* A pointer to a buffer where the result should be returned.
+
+*max:* Specifies the size of the user's buffer. 
+
+####Returns: 
+
+Returns 1 if successful or 0 on error.
+
+<a name="nlst" />
+
+###int Nlst ( const char* outputfile, const char* path )
+
+Performs a short form directory listing of the specified path on the remote system. The results are written to the 
+specified file. 
+
+####Parameters: 
+
+*output:* Specifies the name of a file to receive the directory listing. path Specifies an argument to 'ls' on the 
+remote system. 
+
+####Returns: Returns 1 if successful or 0 on error.
+
+<a name="dir" />
+###int Dir ( const char* outputfile, const char* path ) Sends a 'LIST -aL' command to the server with the specified path. The response to this is usually a long format directory listing which will be written to the file named in outputfile. If outputfile is specified as NULL , the list will be written to stdout. Parameters: output Specifies the name of a file to receive the directory listing. path Specifies an argument to 'ls' on the remote system. Returns: Returns 1 if successful or 0 on error.<a name="size" />
+###int Size ( const char* path, int* size, transfermode mode ) Size() attempts to determine the size of a remote file. Parameters: path A pointer to a buffer where the result should be returned. size A pointer to an int where the size will be returned. mode Specifies the transfer mode as ftplib::image or ftplib::ascii . Returns: If a good response is received and the size is successfully parsed out of the result, 1 is returned. Otherwise, 0 is returned.<a name="moddate" />
+###int ModDate ( const char* path, char* dt, int max ) ModDate() attempts to determine the last access time of a remote file and return it to the user's buffer. The date and time are returned as a string in the format 'YYYYMMDDHHMMSS'. Parameters: path Name of remote file to be checked. buf A pointer to a buffer where the result should be returned. max Specifies the size of the user's buffer. Returns: If a good response is received and the date and time are successfully parsed out of the result, 1 is returned. Otherwise, 0 is returned.<a name="get" />
+###int Get (const char* outputfile, const char *path, transfermode mode ) Get() copies the contents of a remote file to a local file. Parameters: output Name of a local file to receive the contents of the remote file. path Name of remote file to be retrieved. mode Specifies the transfer mode as ftplib::image or ftplib::ascii . Returns: Returns 1 if successful or 0 on error.<a name="get2" />
+###int Get (const char* outputfile, const char *path, transfermode mode, off64_t offset ) Get() copies the contents of a remote file from a given offset and appends it to a local file. Not all ftp servers might implement this feature. Parameters: output Name of a local file to receive the contents of the remote file. path Name of remote file to be retrieved. mode Specifies the transfer mode as ftplib::image or ftplib::ascii . offset Point from where the copy begins. Returns: Returns 1 if successful or 0 on error.<a name="put" />
+###int Put ( const char* inputfile, const char *path, transfermode mode ) Put() transfers a local file to the remote system. Parameters: input Specifies the name of a local file to be transfered to the server. path Specifies the name to be given to the file on the remote system. mode Specifies the transfer mode as ftplib::image or ftplib::ascii . Returns: Returns 1 if successful or 0 on error.<a name="put2" />
+###int Put ( const char* inputfile, const char *path, transfermode mode, off64_t offset ) Put() copies the contents of a local file from a given offset and appends it to a remote file. Not all ftp servers might implement this feature. Parameters: input Specifies the name of a local file to be transfered to the server. path Specifies the name to be given to the file on the remote system. mode Specifies the transfer mode as ftplib::image or ftplib::ascii . offset Point from where the copy begins. Returns: Returns 1 if successful or 0 on error.<a name="rename" />
+###int Rename ( const char *src, const char *dst ) FtpRename() sends a rename request to the remote server. Parameters: src A string containing the current name of the remote file. dst A string containing the desired new name for the remote file. Returns: Returns 1 if successful or 0 on error.<a name="delete" />
+###int Delete ( const char *path ) Requests that the server remove the specified file from the remote file system. Parameters: path The path to the file which is to be removed. Returns: Returns 1 if successful or 0 on error.<a name="setdataencryption" />
+###int SetDataEncryption ( dataencryption enc ) On an already secured ftp session, SetDataEncryption() specifies if the data connection channel will be secured for the next data transfer. Parameters: enc either ftplib::unencrypted or ftplib::secure. Returns: Returns 1 if successful and 0 if the control connection isn't secure or on error. Notes: See NegotiateEncryption.<a name="negotiateencryption" />
+###int NegotiateEncryption () This Method is to be called after Connect and before Login to secure the ftp communication channel. Returns: Returns 1 if successful and 0 if the ssl negotiation failed. Notes: The ftplibpp library uses an ssl/tls encryption approach defined in the RFC4217 standard.<a name="quit" />
+###void Quit () Quit() issues a 'QUIT' command and closes the connection to the remote server.<a name="setcallbackxferfunction" />
+###void SetCallbackXferFunction ( FtpCallbackXfer pointer ) When SetCallbackBytes is set to a bigger value than 0, a callback function can be called during an ftp data transfer. If the callback function returns 0, the data transfer is aborted. The callback function delivers two parameters int xfered and void* arg . xfered is the amount of bytes yet transfered during the data connection and arg contains either NULL or a custom pointer set by SetCallbackArg. If pointer is specified as NULL the xfer callback is disabled. Parameters: pointer is a pointer to a static function of the type FtpCallbackXfer. Notes: Since FtpCallbackXferFunction only accepts pointers to static functions, it might appear quite pointless in an oo c++ context. However there's an easy way to use it anyway. Using SetCallbackArg you supply the class a pointer to the object the method of which you'd like to call from the ftplib object. That pointer is then delivered back with the callback function. from the static callback function you can perform a cast of void* arg to a pointer of the your desired object, and call its method. valid code could look like this: ... static int callback(off64_t xfered, void* arg); // static callback function defined in myclass.h void mymethod(); // common myclass method ... int myclass::callback(off64_t xfered, void* arg) { ((*myclass)(arg)->mymethod(); // casting the pointers to the correct type and calling class method return 1; } ... void myclass::mymethod() { DoSomething(); } ... myftp.SetCallbackArg(this); // supply the myftp object the pointer to the current (myclass) object myftp.SetCallbackBytes(1024); // issue a xfer callback every kb myftp.SetCallbackXferFunction(class::callback); ...<a name="setcallbacklogfunction" />
+###void SetCallbackLogFunction ( FtpCallbackLog pointer ) SetCallbackLogFunction() enables the logging callback. everytime there's been data read from the control connection, pointer is called with a c-styled string and a custom pointer specified in SetCallbackArg . If pointer is specified as NULL logging callback is disabled. Parameters: pointer is a pointer to a static function of the type FtpCallbackLog . Notes: See SetCallbackIdleFunction.<a name="setcallbackcertfunction" />
+###bool SetCallbackCertFunction ( FtpCallbackCert pointer ) SetCallbackCertFunction() enables the ssl/tls certification callback. When you use encryption and you call this method with a certification callback function, it is called when connecting to the server. In the callback function you decide via the boolean return value wether the certificate is valid or not. Certification checking is an advanced issue, and you should read into the openssl documentation if you plan to implement it. pointer is called with a custom pointer specified in SetCallbackArg and the Certification from the Server. If pointer is specified as NULL Certification callback is disabled. Parameters: pointer is a pointer to a static function of the type FtpCallbackCert . Notes: Sample implementation: bool MyCallbackCert(void *arg, X509 *cert) { if (cert == NULL) { printf("Peer sent no certificate.\n"); return false; } else { char peer_CN[265]; int len; X509_NAME_get_text_by_NID(X509_get_subject_name(cert), NID_commonName, peer_CN, 256); printf("subject: %s\n", peer_CN); X509_NAME_get_text_by_NID(X509_get_issuer_name(cert), NID_commonName, peer_CN, 256); printf("issuer: %s\n", peer_CN); return true; } } void SetCallbackIdleFunction ( FtpCallbackIdle pointer ) SetCallbackLogFunction() enables the idle callback. When a connection idles, for a period bigger than 0 set in SetCallbackIdletime a callback to the argument function is issued. Parameters: pointer is a pointer to a static function of the type FtpCallbackIdle . Notes: See SetCallbackXferFunction.<a name="setcallbackarg" />
+###void SetCallbackArg ( void* arg ) SetCallbackArg submits a pointer of custom type to the object, this pointer is returned with a callback function. A good idea is to store the ftplib owners (or whatever object should handle the callback) pointer in it to use it the way described in the SetCallbackXferFunction entry. Parameters: arg a pointer of a custom type .<a name="setcallbackbytes" />
+###void SetCallbackBytes ( off64_t bytes ) SetCallbackBytes specifies the frequency of xfer callbacks. The xfer callback returns the amount of bytes yet transfered on this transfer. Parameters: bytes specifies the frequency in transfered bytes. a value of 100000 would mean every 100000 bytes an xfer callback is issued.<a name="setcallbackidletime" />
+###void SetCallbackIdletime ( int time ) SetCallbackIdletime specifies how long a data socket can idle, without an idle callback beeing issued. Parameters: time time in msec. Notes: The default value of 0, means that on every idle a callback happens. if you don't want this behaviour you have to set a (higher) value.<a name="setconnmode" />
+###void SetConnmode ( ftplib::ftp mode ) SetConnmode specifies which data connection method is to be used for the next data transfer. Parameters: mode either ftplib::pasv (passive mode, default) or ftplib::port (active mode).<a name="setcorrectpasv" />
+###void SetCorrectPasv ( bool b ) Some Ftp-Servers, which run behind a NAT, return their local ip-adresses as PASV replies. when this option is turned on PASV replies are corrected using the ip address the ftp session is currently connected to. Parameters: b true turns the correction on, false turns it off.<a name="fxp" />
+###int Fxp ( ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method ) [static] Fxp is a static function. it uses two ftp session objects and transfer a certain file between them. Parameters: src source ftplib object. dst destination ftplib object. pathSrc path to file to be copied copy ("/incoming/myfile.tar.gz"). pathDst path to file destination ("/pub/myfile_from_some_ftp.tar.gz"); mode either ftplib::ascii (ascii) or ftplib::image (binary). method either ftplib::defaultfxp (pasv on dst, port on src) or ftplib::alternativefxp (pasv on src, port on dst). Returns: Returns 1 if successful, -1 if initilization failed ("PORT" and "PASV"), or 0 if the data transfer somehow failed. Notes: Fxp - direct Ftp to Ftp transfer - is rather an exploit than a feature and might thus be prevented by many servers. Currently Fxp does not work with encrypted data connections, so be sure to switch to unencrypted data channels before performing fxp.<a name="rawread" />
+###int RawRead ( void* buf, int max, ftphandle *handle ) RawRead copies up to max bytes of data from the specified data connection and returns it to the user's buffer. If the data connection was opened in ascii mode, no more than one line of data will be returned. Parameters: buf Specifies the address of a buffer where received data will be written. max Specifies the size of the user's buffer. handle A handle returned by FtpAccess(). Returns: Returns the number of bytes written to the user's buffer or -1 on error or end of file.<a name="rawwrite" />
+###int RawWrite ( void* buf, int len, ftphandle *handle ) RawWrite() sends data to a remote file. If the file were accessed in record mode, the necessary conversions are performed. Parameters: buf A buffer containing the data to be sent to the remote file. len The number of bytes to be sent from 'buf'. handle A handle returned by RawOpen(). Returns: Returns the number of bytes sent from the user's buffer or -1 on error.<a name="rawopen" />
+###ftphandle* RawOpen ( const char *path, accesstype type, transfermode mode ) RawOpen() opens a remote file or directory and returns a handle for the calling program to use to transfer data. Parameters: path Specifies the name of the remote file or directory to open. type Specifies the type of transfer to be performed. ftplib::dir performs a terse directory. ftplib::dirverbose performs a verbose directory. ftplib::fileread opens a remote file for reading. ftplib::filewrite creates a remote file and readies it for writing. ftplib::filewriteappend and ftplib::filereadappend are for appending file operations. mode Specifies the transfer mode as ftplib::ascii or ftplib::image. Returns: Returns 1 if successful or 0 on error.<a name="rawclose" />
+###int RawClose ( ftphandle* handle ) Closes the data connection specified by handle and frees associated resources. Parameters: handle A handle returned by RawOpen(). Returns: Returns 1 if successful or 0 on error.
