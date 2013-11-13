@@ -44,6 +44,11 @@
 typedef int socklen_t;
 #endif
 
+#if defined(_WIN32)
+#define memccpy _memccpy
+#define strdup _strdup
+#endif
+
 using namespace std;
 
 /* socket values */
@@ -858,7 +863,13 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 	cp = strchr(nControl->response,'(');
 	if (cp == NULL) return -1;
 	cp++;
+#if defined(_WIN32)
+	unsigned int v_i[6];
+    sscanf(cp,"%u,%u,%u,%u,%u,%u",&v_i[2],&v_i[3],&v_i[4],&v_i[5],&v_i[0],&v_i[1]);
+    for (int i = 0; i < 6; i++) v[i] = (unsigned char) v_i[i]; 
+#else
 	sscanf(cp,"%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+#endif
 	if (nControl->correctpasv) if (!CorrectPasvResponse(v)) return -1;
 	sin.sa.sa_data[2] = v[2];
 	sin.sa.sa_data[3] = v[3];
@@ -1402,7 +1413,13 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		cp = strchr(dst->mp_ftphandle->response,'(');
 		if (cp == NULL) return -1;
 		cp++;
+#if defined(_WIN32)
+		unsigned int v_i[6];
+    	sscanf(cp,"%u,%u,%u,%u,%u,%u",&v_i[2],&v_i[3],&v_i[4],&v_i[5],&v_i[0],&v_i[1]);
+    	for (int i = 0; i < 6; i++) v[i] = (unsigned char) v_i[i]; 
+#else
 		sscanf(cp,"%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+#endif
 		if (dst->mp_ftphandle->correctpasv) if (!dst->CorrectPasvResponse(v)) return -1;
 
 		// PORT src
@@ -1456,7 +1473,13 @@ int ftplib::Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathD
 		cp = strchr(src->mp_ftphandle->response,'(');
 		if (cp == NULL) return -1;
 		cp++;
+#if defined(_WIN32)
+		unsigned int v_i[6];
+    	sscanf(cp,"%u,%u,%u,%u,%u,%u",&v_i[2],&v_i[3],&v_i[4],&v_i[5],&v_i[0],&v_i[1]);
+    	for (int i = 0; i < 6; i++) v[i] = (unsigned char) v_i[i]; 
+#else
 		sscanf(cp,"%hhu,%hhu,%hhu,%hhu,%hhu,%hhu",&v[2],&v[3],&v[4],&v[5],&v[0],&v[1]);
+#endif
 		if (src->mp_ftphandle->correctpasv) if (!src->CorrectPasvResponse(v)) return -1;
 
 		// PORT dst
