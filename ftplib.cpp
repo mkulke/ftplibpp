@@ -421,8 +421,9 @@ int ftplib::Connect(const char *host)
 	{
 		if ((pse = getservbyname("ftp","tcp")) == NULL)
 		{
-		perror("getservbyname");
-		return 0;
+			perror("getservbyname");
+			free(lhost);
+			return 0;
 		}
 		sin.sin_port = pse->s_port;
 	}
@@ -446,13 +447,15 @@ int ftplib::Connect(const char *host)
 	{
 		if ((phe = gethostbyname(lhost)) == NULL)
 		{
-		perror("gethostbyname");
-		return 0;
+			perror("gethostbyname");
+			free(lhost);
+			return 0;
 		}
 		memcpy((char *)&sin.sin_addr, phe->h_addr, phe->h_length);
 	}
 	
 	free(lhost);
+
 	sControl = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 	if (sControl == -1)
 	{
