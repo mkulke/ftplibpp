@@ -1,3 +1,13 @@
+.depend
+.*.swp
+*.back
+*~
+*.txt
+*.gcov
+*.gcda
+*.gcno
+*.html
+sample/sample
 
 *.o
 
@@ -6,5 +16,5 @@
 *.so
 
 *.2
-
+*.1
 *.0
