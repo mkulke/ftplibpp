@@ -16,7 +16,7 @@ advanced features like resuming, fxp, SSL/TLs encryption, large file support, or
 very base of ftplibpp is Thomas Pfau's [ftplib c library](http://nbpfaus.net/%7Epfau/ftplib/).
 
 Every FTP session is represented by an ftplib object, whose methods are called to communicate with the FTP server. The 
-FTP sessions should begin with a call to *myftp.Connect("myftp.org:21")* (and maybe *myftp.NegotiateEncryption()* ), be 
+FTP sessions should begin with a call to *myftp.Connect("myftp.org")* (and maybe *myftp.NegotiateEncryption()* ), be 
 followed with *myftp.Login("myuser","mypass")* and ended by *myftp.Quit()*. For the magic in between, read the class 
 methods documentation. Most methods have their tasks pretty much explained in their name. ftplibpp uses OpenSSL for 
 encryption functionality, if you don't need it you can set the "NOSSL" flag (e.g. *g++ -c ftplib.cpp -DNOSSL* ). If your 
@@ -39,7 +39,7 @@ use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS* ).
 
 * [ftplib ()](#ftplib)
 * [char* LastResponse ()](#lastresponse)
-* [int Connect (const char *host)](#connect)
+* [int Connect (const char *host, const char *port)](#connect)
 * [int Login (const char *user, const char *pass)](#login)
 * [int Site (const char *cmd)](#site)
 * [int Raw (const char *cmd)](#raw)
@@ -172,11 +172,13 @@ LastResponse() returns a pointer to the last server response string. Otherwise, 
       
 <a name="connect" />
 
-###int Connect ( const char* host )
+###int Connect ( const char* host, const char *port)
 
-Connect() establishes a connection to the FTP server on the specified machine and returns a handle which can be used to 
-initiate data transfers. The host name should be specified in the form of `<host>:<port>`. `<host>` may be either a host name or ip 
-address. `<port>` may be either a service name or a port number.
+Connect() establishes a connection to the FTP server on the specified machine
+and returns a handle which can be used to initiate data transfers.
+The host name may be either a host name or ip address.
+The port may be either a service name or a port.
+number.
     
 ####Parameters:
      

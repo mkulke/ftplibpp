@@ -53,7 +53,6 @@
 
 #if defined(__APPLE__)
 #undef NOLFS
-#define NOSSL
 typedef off_t off64_t;
 #define fseeko64 fseeko
 #define fopen64 fopen
@@ -167,7 +166,7 @@ public:
 	ftplib();
 	~ftplib();
 	char* LastResponse();
-	int Connect(const char *host);
+	int Connect(const char *host, const char * port = "21");
 	int Login(const char *user, const char *pass);
 	int Site(const char *cmd);
 	int Raw(const char *cmd);

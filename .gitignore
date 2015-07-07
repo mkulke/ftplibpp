@@ -8,6 +8,8 @@
 *.gcno
 *.html
 sample/sample
+sample/sample.bin
+sample/sample.download
 
 *.o
 

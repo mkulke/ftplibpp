@@ -7,11 +7,12 @@ TARGETS := libftp++.a ###XXX libftp++.so
 OBJECTS := ftplib.o
 SOURCES := ftplib.cpp
 DEFINES += ###TBD -DNOSSL
+INCLUDES := -I/opt/local/include
 DEBUG := -g
 CXXWARNFLAGS := -Wold-style-cast -Wsign-conversion -Wconversion -Wsign-compare -Wpointer-arith
 
-CXXFLAGS := -std=c++98 -Wall -Wextra $(CXXWARNFLAGS) $(DEBUG) -I. $(INCLUDES) $(DEFINES)
-LDFLAGS := -L.
+CXXFLAGS := -std=c++98 -Wall -Wextra $(CXXWARNFLAGS) $(DEBUG) -I$(CURDIR) $(INCLUDES) $(DEFINES)
+LDFLAGS := -L$(CURDIR)
 
 ifdef TCOV
 CXXFLAGS+= --coverage
@@ -27,12 +28,13 @@ endif
 
 .PHONY: all clean distclean depend install uninstall astyle doc tcov
 all : $(TARGETS) doc
-	$(MAKE) -C sample test 'CXXFLAGS=$(CXXFLAGS)'
+	$(MAKE) -C sample test 'CXXFLAGS=$(CXXFLAGS)' 'LDFLAGS=$(LDFLAGS) $(LIBS)'
 
 tcov: TCOV=1
 tcov: CXXFLAGS+= --coverage
 tcov: all
 	gcov ftplib
+	gcov sample/sample
 
 astyle :
 	-astyle --style=ansi -t4 *.cpp *.h sample/sample.cpp

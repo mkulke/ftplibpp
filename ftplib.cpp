@@ -1,10 +1,13 @@
 
+static bool verbose = true;
+
 // enable > 2gb support (LFS)
 #ifndef NOLFS
 #define _LARGEFILE_SOURCE
 #define _LARGEFILE64_SOURCE
 #endif
 
+#include <err.h>
 #include "ftplib.h"
 
 #if defined(_WIN32)
@@ -17,6 +20,7 @@
 #include <arpa/inet.h>
 #endif
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -42,15 +46,24 @@
 
 #if defined(_WIN32)
 typedef int socklen_t;
+typedef unsigned short       in_port_t;
 #endif
 
-#if defined(_WIN32)
-#define memccpy _memccpy
-#define strdup _strdup
-#endif
+/* copies bytes until a specifed character is found, or a maximum number of
+ * characters have been copied. */
+static char * memccpy(char * dest, const char * src, int c, size_t count)
+{
+	while (count && (*(dest++) = *(src++))
+	        != static_cast<char>(c))
+	{
+		count--;
+	}
 
-/* socket values */
-#define FTPLIB_BUFSIZ   (16 * 1024)
+	return (count ? dest : NULL);
+}
+
+/* socket buffer size */
+#define FTPLIB_BUFSIZ   (20 * 1024)
 #define ACCEPT_TIMEOUT  30
 
 /* win32 dll initializer */
@@ -75,6 +88,52 @@ BOOL APIENTRY DllMain(HINSTANCE hInst, DWORD reason, LPVOID reserved)
 }
 #endif
 
+
+/*
+ * Translate IPv4 mapped IPv6 address to IPv4 address
+ * see /usr/include/netinet6/in6.h
+ */
+static void
+unmappedaddr(struct sockaddr_in6 *sin6)
+{
+	struct sockaddr_in *sin4;
+	in_addr_t addr;
+	in_port_t port;
+
+	if (sin6->sin6_family != AF_INET6 ||
+	        !IN6_IS_ADDR_V4MAPPED(&sin6->sin6_addr))
+	{
+
+#ifdef BSD
+		assert(sin6->sin6_len == sizeof(struct sockaddr_in6));
+#endif
+
+		return;
+	}
+
+	sin4 = reinterpret_cast<struct sockaddr_in *>(sin6);
+	addr = *reinterpret_cast<in_addr_t *>(&sin6->sin6_addr.s6_addr[12]);
+	port = sin6->sin6_port;
+	memset(sin4, 0, sizeof(struct sockaddr_in));
+	sin4->sin_addr.s_addr = addr;
+	sin4->sin_port = port;
+	sin4->sin_family = AF_INET;
+
+#ifdef BSD
+	sin4->sin_len = sizeof(struct sockaddr_in);
+#endif
+
+	if (verbose)
+	{
+		char str[INET6_ADDRSTRLEN];
+		warnx("unmappedaddr %s", inet_ntop(sin4->sin_family, &sin4->sin_addr, str, INET6_ADDRSTRLEN));
+	}
+
+	return;
+}
+
+
+
 /*
  * Constructor
  */
@@ -97,14 +156,14 @@ ftplib::ftplib() : mp_ftphandle(NULL)
 	if (mp_ftphandle == NULL)
 	{
 		perror("calloc()");
-		exit(1);    //FIXME: can`t continue! ck
+		exit(1);    //TODO: can`t continue! ck
 	}
 	mp_ftphandle->buf = static_cast<char *>(malloc(FTPLIB_BUFSIZ));
 	if (mp_ftphandle->buf == NULL)
 	{
 		perror("malloc()");
 		free(mp_ftphandle);
-		exit(1);    //FIXME: can`t continue! ck
+		exit(1);    //TODO: can`t continue! ck
 	}
 
 #ifndef NOSSL
@@ -211,7 +270,7 @@ int ftplib::readline(char *buf, size_t max, ftphandle *ctl)
 		if (ctl->cavail > 0)
 		{
 			x = (max >= ctl->cavail) ? ctl->cavail : max - 1;
-			end = static_cast<char*>(memccpy(bp, ctl->cget, '\n', x));
+			end = memccpy(bp, ctl->cget, '\n', x);
 			if (end != NULL)
 			{
 				x = static_cast<size_t>(end - bp);
@@ -225,7 +284,7 @@ int ftplib::readline(char *buf, size_t max, ftphandle *ctl)
 			if (end != NULL)
 			{
 				bp -= 2;
-				if (strcmp(bp, "\r\n") == 0)    //XXX ascii mode
+				if (strcmp(bp, "\r\n") == 0)    // NOTE: ascii mode
 				{
 					*bp++ = '\n';
 					*bp++ = '\0';
@@ -264,13 +323,13 @@ int ftplib::readline(char *buf, size_t max, ftphandle *ctl)
 #ifndef NOSSL
 		if (ctl->tlsdata)
 		{
-			len = SSL_read(ctl->ssl, ctl->cput, ctl->cleft);
+			len = SSL_read(ctl->ssl, ctl->cput, static_cast<int>(ctl->cleft));
 		}
 		else
 		{
 			if (ctl->tlsctrl)
 			{
-				len = SSL_read(ctl->ssl, ctl->cput, ctl->cleft);
+				len = SSL_read(ctl->ssl, ctl->cput, static_cast<int>(ctl->cleft));
 			}
 			else
 			{
@@ -325,7 +384,7 @@ int ftplib::writeline(char *buf, size_t len, ftphandle *nData)
 	{
 		return -1;
 	}
-	nbp = nData->buf;   //XXX ascii buffer
+	nbp = nData->buf;   // NOTE: ascii buffer
 	for (x = 0; x < len; x++)
 	{
 		if ((*ubp == '\n') && (lc != '\r'))
@@ -398,7 +457,7 @@ int ftplib::writeline(char *buf, size_t len, ftphandle *nData)
 #ifndef NOSSL
 		if (nData->tlsctrl)
 		{
-			w = SSL_write(nData->ssl, nbp, nb);
+			w = SSL_write(nData->ssl, nbp, static_cast<int>(nb));
 		}
 		else
 		{
@@ -472,21 +531,8 @@ char* ftplib::LastResponse()
  *
  * return 1 if connected, 0 if not
  */
-int ftplib::Connect(const char *host)
+int ftplib::Connect(const char *host, const char *port)
 {
-	int sControl;
-	union
-	{
-		struct sockaddr sa;
-		struct sockaddr_in in;
-	} sin;
-	struct hostent *phe;
-	struct servent *pse;
-	int on = 1;
-	int ret;
-	char *lhost;
-	char *pnum;
-
 	mp_ftphandle->dir = ftphandle::FTPLIB_CONTROL;
 	mp_ftphandle->ctrl = NULL;
 	mp_ftphandle->xfered = 0;
@@ -500,75 +546,54 @@ int ftplib::Connect(const char *host)
 	mp_ftphandle->offset = 0;
 	mp_ftphandle->handle = 0;
 
-	memset(&sin, 0, sizeof(sin));
-	sin.in.sin_family = AF_INET;
-	lhost = strdup(host);
-	pnum = strchr(lhost, ':');
-	if (pnum == NULL)
-	{
-		if ((pse = getservbyname("ftp", "tcp")) == NULL)
-		{
-			perror("getservbyname()");
-			free(lhost);
-			return 0;
-		}
-		sin.in.sin_port = static_cast<uint16_t>(pse->s_port);
-	}
-	else
-	{
-		*pnum++ = '\0';
-		if (isdigit(*pnum))
-		{
-			sin.in.sin_port = htons(atoi(pnum));
-		}
-		else
-		{
-			if ((pse = getservbyname(pnum, "tcp")) == NULL);
-			{
-				perror("getservbyname()");
-				free(lhost);
-				return 0;
-			}
-			sin.in.sin_port = static_cast<uint16_t>(pse->s_port);
-		}
-	}
+	int sControl = -1;
+	struct addrinfo hints, *res, *res0 = NULL;
+	int error;
+	const char *cause = NULL;
 
-#if defined(_WIN32)
-	if ((sin.in.sin_addr.s_addr = inet_addr(lhost)) == -1)
+	memset(&hints, 0, sizeof(hints));
+
+#ifdef __INTEGRITY
+#warning "AI_NUMERICSERV not supported!"
+	hints.ai_flags = AI_NUMERICHOST;
 #else
-	ret = inet_aton(lhost, &sin.in.sin_addr);
-	if (ret == 0)
+	//TODO: hints.ai_flags = AI_NUMERICHOST | AI_NUMERICSERV;
 #endif
 
+	hints.ai_family = PF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	error = getaddrinfo(host, port, &hints, &res0);
+
+	if (error)
 	{
-		if ((phe = gethostbyname(lhost)) == NULL)
+		warnx("getaddrinfo(%s): %s", host, gai_strerror(error));
+		freeaddrinfo(res0);
+		return 0;
+	}
+	for (res = res0; res; res = res->ai_next)
+	{
+		sControl = socket(res->ai_family, res->ai_socktype,
+		                  res->ai_protocol);
+		if (sControl < 0)
 		{
-			perror("gethostbyname()");
-			free(lhost);
-			return 0;
+			cause = "socket";
+			continue;
 		}
-		memcpy(&sin.in.sin_addr, phe->h_addr, static_cast<size_t>(phe->h_length));
-	}
 
-	free(lhost);
+		if (connect(sControl, res->ai_addr, res->ai_addrlen) < 0)
+		{
+			cause = "connect";
+			close(sControl);
+			sControl = -1;
+			continue;
+		}
 
-	sControl = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (sControl == -1)
-	{
-		perror("socket()");
-		return 0;
+		break;  /* okay we got one */
 	}
-
-	if (setsockopt(sControl, SOL_SOCKET, SO_REUSEADDR, SETSOCKOPT_OPTVAL_TYPE(& on), sizeof(on)) == -1)
+	freeaddrinfo(res0);
+	if (sControl < 0)
 	{
-		perror("setsockopt()");
-		net_close(sControl);
-		return 0;
-	}
-	if (connect(sControl, &sin.sa, sizeof(sin.sa)) == -1)
-	{
-		perror("connect()");
-		net_close(sControl);
+		warn("%s", cause);
 		return 0;
 	}
 
@@ -608,7 +633,7 @@ int ftplib::FtpSendCmd(const char *cmd, char expresp, ftphandle *nControl)
 #ifndef NOSSL
 	if (nControl->tlsctrl)
 	{
-		x = SSL_write(nControl->ssl, buf, strlen(buf));
+		x = SSL_write(nControl->ssl, buf, static_cast<int>(strlen(buf)));
 	}
 	else
 	{
@@ -711,7 +736,7 @@ int ftplib::FtpAcceptConnection(ftphandle *nData, ftphandle *nControl)
 			sData = accept(nData->handle, &addr, &l);
 			i = errno;  // save errno before close
 			net_close(nData->handle);
-			if (sData >= 0)      //FIXME accept return -1 on error!
+			if (sData >= 0)      // NOTE: accept return -1 on error!
 			{
 				rv = 1; // OK
 				nData->handle = sData;
@@ -816,6 +841,7 @@ int ftplib::FtpAccess(const char *path, accesstype type, transfermode mode, ftph
 		{
 			return 0;
 		}
+		assert(*nData);
 		if (!FtpAcceptConnection(*nData, nControl))
 		{
 			FtpClose(*nData);
@@ -823,6 +849,8 @@ int ftplib::FtpAccess(const char *path, accesstype type, transfermode mode, ftph
 			return 0;
 		}
 	}
+
+	assert(*nData);
 
 #ifndef NOSSL
 	if (nControl->tlsdata)
@@ -843,18 +871,23 @@ int ftplib::FtpAccess(const char *path, accesstype type, transfermode mode, ftph
 }
 
 /*
- * FtpOpenPort - Establishes a PORT connection for data transfer
+ * FtpOpenPort - Establishes a EPRT connection for data transfer
  *
  * return 1 if successful, -1 otherwise
  */
 int ftplib::FtpOpenPort(ftphandle *nControl, ftphandle **nData, transfermode mode, ftphandle::direction dir, char *cmd)
 {
 	int sData;
+
+	// NOTE: prevent casts
 	union
 	{
 		struct sockaddr sa;
-		struct sockaddr_in in;
-	} sin;
+		struct sockaddr_storage ss;
+		struct sockaddr_in sin4;
+		struct sockaddr_in6 sin6;
+	} sin = {};
+
 	struct linger lng = { 0, 0 };
 	socklen_t l;
 	int on = 1;
@@ -875,15 +908,24 @@ int ftplib::FtpOpenPort(ftphandle *nControl, ftphandle **nData, transfermode mod
 		sprintf(nControl->response, "Invalid mode %c\n", mode);
 		return -1;
 	}
-	l = sizeof(sin);
 
-	if (getsockname(nControl->handle, &sin.sa, &l) < 0)
+	/* find our own address, bind, and listen */
+	//FIXME int  getsockname(int, struct sockaddr *, socklen_t *)
+	l = sizeof(sin.ss);		// NOTE: sizeof(socket_storage) used
+	if (getsockname(nControl->handle, &sin.sa, &l) == -1)
 	{
 		perror("getsockname()");
 		return -1;
 	}
 
-	sData = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sin.ss.ss_family == AF_INET6)
+	{
+		char str[INET6_ADDRSTRLEN];
+		warnx("sockname: %s", inet_ntop(sin.ss.ss_family, &sin.sin6.sin6_addr, str, INET6_ADDRSTRLEN));
+		unmappedaddr(&sin.sin6);
+	}
+
+	sData = socket(sin.ss.ss_family, SOCK_STREAM, IPPROTO_TCP);
 	if (sData == -1)
 	{
 		perror("socket()");
@@ -902,31 +944,60 @@ int ftplib::FtpOpenPort(ftphandle *nControl, ftphandle **nData, transfermode mod
 		return -1;
 	}
 
-	sin.in.sin_port = 0;
-	if (bind(sData, &sin.sa, sizeof(sin)) == -1)
+#if defined(BSD)
+	if (bind(sData, &sin.sa, sin.sa.sa_len) == -1)
+#else
+	if (bind(sData, &sin.sa, sizeof(sin.ss)) == -1)
+#endif
 	{
 		perror("bind()");
 		net_close(sData);
 		return -1;
 	}
-	if (listen(sData, 1) < 0)
+	if (listen(sData, 1) == -1)
 	{
 		perror("listen()");
 		net_close(sData);
 		return -1;
 	}
-	if (getsockname(sData, &sin.sa, &l) < 0)
+
+	/* find what port we're on and tell the server */
+	//FIXME int  getsockname(int, struct sockaddr *, socklen_t *)
+	l = sizeof(sin.ss);		// NOTE: sizeof(socket_storage) used
+	if (getsockname(sData, &sin.sa, &l) == -1)
 	{
+		perror("getsockname()");
 		net_close(sData);
-		return 0;
+		return -1;
 	}
-	sprintf(buf, "PORT %hhu,%hhu,%hhu,%hhu,%hhu,%hhu",
-	        static_cast<unsigned char>(sin.sa.sa_data[2]),
-	        static_cast<unsigned char>(sin.sa.sa_data[3]),
-	        static_cast<unsigned char>(sin.sa.sa_data[4]),
-	        static_cast<unsigned char>(sin.sa.sa_data[5]),
-	        static_cast<unsigned char>(sin.sa.sa_data[0]),
-	        static_cast<unsigned char>(sin.sa.sa_data[1]));
+
+	// we use EPRT (Extended Port command)! ck
+	// (RFC 2428) In this specification, the FTP commands PORT and PASV are
+	// replaced with EPRT and EPSV, respectively.
+	switch (sin.ss.ss_family)
+	{
+	case AF_INET:
+	{
+		// EPRT |1|132.235.1.2|6275|
+		char hname[INET6_ADDRSTRLEN];
+		inet_ntop(sin.ss.ss_family, &sin.sin4.sin_addr, hname, INET6_ADDRSTRLEN);
+		sprintf(buf, "EPRT |%d|%s|%d|", 1, hname, htons(sin.sin4.sin_port));
+	}
+	break;
+	case AF_INET6:
+	{
+		// EPRT |2|1080::8:800:200C:417A|5282|
+		char hname[INET6_ADDRSTRLEN];
+		assert(sin.sin6.sin6_scope_id == 0);
+		inet_ntop(sin.ss.ss_family, &sin.sin6.sin6_addr, hname, INET6_ADDRSTRLEN);
+		sprintf(buf, "EPRT |%d|%s|%d|", 2, hname, htons(sin.sin6.sin6_port));
+	}
+	break;
+	default:
+		net_close(sData);
+		return -1;
+	}
+
 	if (!FtpSendCmd(buf, '2', nControl))
 	{
 		net_close(sData);
@@ -1001,24 +1072,32 @@ int ftplib::FtpOpenPort(ftphandle *nControl, ftphandle **nData, transfermode mod
 }
 
 /*
- * FtpOpenPasv - Establishes a PASV connection for data transfer
+ * FtpOpenPasv - Establishes a EPSV connection for data transfer
  *
  * return 1 if successful, -1 otherwise
  */
 int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mode, ftphandle::direction dir, char *cmd)
 {
 	int sData;
+
+	// NOTE: prevent casts
 	union
 	{
 		struct sockaddr sa;
-		struct sockaddr_in in;
-	} sin;
+		struct sockaddr_storage ss;
+		struct sockaddr_in sin4;
+		struct sockaddr_in6 sin6;
+	} sin = {};
+
+	char str[INET6_ADDRSTRLEN];
+
 	struct linger lng = { 0, 0 };
 	socklen_t l;
 	int on = 1;
 	ftphandle *ctrl;
 	char *cp;
-	unsigned char v[6];
+	char v[6];
+	in_port_t port = 0;
 	ssize_t ret;
 
 	if (nControl->dir != ftphandle::FTPLIB_CONTROL)
@@ -1035,11 +1114,14 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 		sprintf(nControl->response, "Invalid mode %c\n", mode);
 		return -1;
 	}
-	l = sizeof(sin);
 
-	memset(&sin, 0, l);
-	sin.in.sin_family = AF_INET;
-	if (!FtpSendCmd("PASV", '2', nControl))
+	// When the EPSV command is issued with no argument, the server will choose
+	// the network protocol for the data connection based on the protocol used
+	// for the control connection.
+	//XXX if (!FtpSendCmd("EPSV 1", '2', nControl))
+	//XXX if (!FtpSendCmd("EPSV 2", '2', nControl))
+	//TBD if (!FtpSendCmd("EPSV All", '2', nControl))
+	if (!FtpSendCmd("EPSV", '2', nControl))
 	{
 		return -1;
 	}
@@ -1050,27 +1132,48 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 	}
 	cp++;
 
-#if defined(_WIN32)
-	unsigned int v_i[6];
-	sscanf(cp, "%u,%u,%u,%u,%u,%u", &v_i[2], &v_i[3], &v_i[4], &v_i[5], &v_i[0], &v_i[1]);
-	for (int i = 0; i < 6; i++)
+	// Entering Extended Passive Mode (|||6446|)
+	if (sscanf(cp, "%c%c%c%hu%c", &v[0], &v[1], &v[2], &port, &v[3]) != 5 ||
+	        v[0] != v[1] || v[0] != v[2] || v[0] != v[3])
 	{
-		v[i] = static_cast<unsigned char>(v_i[i]);
+		return -1;  // protocol error
 	}
-#else
-	sscanf(cp, "%hhu,%hhu,%hhu,%hhu,%hhu,%hhu", &v[2], &v[3], &v[4], &v[5], &v[0], &v[1]);
-#endif
 
-	if (nControl->correctpasv) if (!CorrectPasvResponse(v))
+	/* construct sockaddr for data socket */
+	//FIXME int getpeername(int, struct sockaddr *, socklen_t *)
+	l = sizeof(sin.ss);		// NOTE: sizeof(socket_storage) used
+	if (getpeername(nControl->handle, &sin.sa, &l) == -1)
+	{
+		perror("getpeername()");
+		return -1;
+	}
+
+
+	if (sin.ss.ss_family == AF_INET6)
+	{
+		warnx("peername: %s", inet_ntop(sin.ss.ss_family, &sin.sin6.sin6_addr, str, INET6_ADDRSTRLEN));
+		unmappedaddr(&sin.sin6);
+	}
+
+	switch (sin.ss.ss_family)
+	{
+	case AF_INET6:
+		sin.sin6.sin6_port = htons(port);
+		if (verbose)
 		{
-			return -1;
+			warnx("peer %s:%d", inet_ntop(sin.ss.ss_family, &sin.sin6.sin6_addr, str, INET6_ADDRSTRLEN), port);
 		}
-	sin.sa.sa_data[2] = static_cast<char>(v[2]);
-	sin.sa.sa_data[3] = static_cast<char>(v[3]);
-	sin.sa.sa_data[4] = static_cast<char>(v[4]);
-	sin.sa.sa_data[5] = static_cast<char>(v[5]);
-	sin.sa.sa_data[0] = static_cast<char>(v[0]);
-	sin.sa.sa_data[1] = static_cast<char>(v[1]);
+		break;
+	case AF_INET:
+		sin.sin4.sin_port = htons(port);
+		if (verbose)
+		{
+			warnx("peer %s:%d", inet_ntop(sin.ss.ss_family, &sin.sin4.sin_addr, str, INET6_ADDRSTRLEN), port);
+		}
+		break;
+	default:
+		return -1;
+	}
 
 	if (mp_ftphandle->offset != 0)
 	{
@@ -1082,7 +1185,7 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 		}
 	}
 
-	sData = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+	sData = socket(sin.ss.ss_family, SOCK_STREAM, IPPROTO_TCP);
 	if (sData == -1)
 	{
 		perror("socket()");
@@ -1111,7 +1214,7 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 #ifndef NOSSL
 	if (nControl->tlsctrl)
 	{
-		ret = SSL_write(nControl->ssl, cmd, strlen(cmd));
+		ret = SSL_write(nControl->ssl, cmd, static_cast<int>(strlen(cmd)));
 	}
 	else
 	{
@@ -1128,9 +1231,13 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 		return -1;
 	}
 
-	if (connect(sData, &sin.sa, sizeof(sin.sa)) == -1)
+#if defined(BSD)
+	if (connect(sData, &sin.sa, sin.sa.sa_len) == -1)
+#else
+	if (connect(sData, &sin.sa, sizeof(sin.ss)) == -1)
+#endif
 	{
-		perror("connect()");
+		perror("connect");
 		net_close(sData);
 		return -1;
 	}
@@ -1195,7 +1302,7 @@ int ftplib::FtpClose(ftphandle *nData)
 	{
 		if (nData->buf != NULL)
 		{
-			writeline(NULL, 0, nData);  //XXX ascii mode
+			writeline(NULL, 0, nData);  // NOTE: ascii mode
 		}
 	}
 	else if (nData->dir != ftphandle::FTPLIB_READ)
@@ -1236,19 +1343,19 @@ ssize_t ftplib::FtpRead(void *buf, size_t max, ftphandle *nData)
 	}
 	if (nData->buf)
 	{
-		i = readline(static_cast<char*>(buf), max, nData);  //XXX ascii mode
+		i = readline(static_cast<char*>(buf), max, nData);  // NOTE: ascii mode
 	}
 	else
 	{
 		if (!socket_wait(nData))
 		{
-			return -1;  // error
+			return -1;  // error forced by callback
 		}
 
 #ifndef NOSSL
 		if (nData->tlsdata)
 		{
-			i = SSL_read(nData->ssl, buf, max);
+			i = SSL_read(nData->ssl, buf, static_cast<int>(max));
 		}
 		else
 		{
@@ -1272,7 +1379,7 @@ ssize_t ftplib::FtpRead(void *buf, size_t max, ftphandle *nData)
 		{
 			if (nData->xfercb(nData->xfered, nData->cbarg) == 0)
 			{
-				return -1;  // error
+				return -1;  // error forced by callback
 			}
 			nData->xfered1 = 0;
 		}
@@ -1293,7 +1400,7 @@ ssize_t ftplib::FtpWrite(void *buf, size_t len, ftphandle *nData)
 	}
 	if (nData->buf)
 	{
-		i = writeline(static_cast<char*>(buf), len, nData);  //XXX ascii mode
+		i = writeline(static_cast<char*>(buf), len, nData);  // NOTE: ascii mode
 	}
 	else
 	{
@@ -1305,7 +1412,7 @@ ssize_t ftplib::FtpWrite(void *buf, size_t len, ftphandle *nData)
 #ifndef NOSSL
 		if (nData->tlsdata)
 		{
-			i = SSL_write(nData->ssl, buf, len);
+			i = SSL_write(nData->ssl, buf, static_cast<int>(len));
 		}
 		else
 		{
@@ -1600,7 +1707,7 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 		}
 		else
 		{
-			ssize_t len;
+			ssize_t len = 0;
 			while ((len = FtpRead(dbuf, FTPLIB_BUFSIZ, nData)) > 0)
 			{
 				if (fwrite(dbuf, 1, static_cast<size_t>(len), local) <= 0)
@@ -1609,15 +1716,21 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 					rv = 0; // error
 					break;
 				}
+
 #ifdef __CYGWIN__
 				fflush(local);  //TODO: needed for test only under cygwin? ck
 #endif
+
 			}
+
+#if 0       //TBD check this!
 			if (len < 0)
 			{
 				perror("FtpRead()");
 				rv = 0; // TODO ftp read error
 			}
+#endif
+
 		}
 		free(dbuf);
 	}

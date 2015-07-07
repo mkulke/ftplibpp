@@ -8,12 +8,15 @@ sample: sample.o ../libftp++.a
 	$(LINK.cc) -L.. -o $@ $^ ### -lftp++
 
 test: sample
-	./sample localhost:2121
+	rm -f sample.bin sample.download
+	./sample localhost 2121
 	while test ! -f sample.bin; do \
-		./sample localhost:2121;   \
+		./sample localhost 2121;   \
 	done
 	diff sample sample.bin
-	-./sample localhost
+	./sample 127.0.0.1 2121 --active
+	./sample ::ffff:127.0.0.1
+	./sample ::1 2121 --active
 	-./sample
 
 clean:

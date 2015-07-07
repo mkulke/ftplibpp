@@ -5,6 +5,7 @@
 
 #include <string>
 #include <time.h>
+#include <assert.h>
 
 
 // get size of a local file
@@ -102,17 +103,27 @@ int main(int argc, char** argv)
 
 	if (argc > 1)
 	{
-		myftp->SetConnmode(ftplib::port);
-		ok = myftp->Connect(argv[1]);
+		if (argc > 3)
+		{
+			myftp->SetConnmode(ftplib::port);   // test active ftp
+		}
+
+		ok = myftp->Connect(argv[1], ((argc > 2) ? argv[2] : "2121"));
 	}
 	else
 	{
-		myftp->SetConnmode(ftplib::pasv);
+		myftp->SetConnmode(ftplib::pasv);       // test pasive ftp
 		//                             ftp://ftp.gwdg.de/pub/incoming/
 		ok = myftp->Connect("ftp.gwdg.de");     //TODO /pub/incoming/
 	}
 
-	if (ok && myftp->Login("ftp", "OK"))
+	if (ok)
+	{
+		ok = myftp->Login("ftp", "OK");
+		//FIXME ok = myftp->Login("anonymous", "");
+	}
+
+	if (ok)
 	{
 		const std::string filename("sample");   // filename for upload and download test
 
@@ -136,12 +147,15 @@ int main(int argc, char** argv)
 		else
 		{
 			myftp->Put("README.md", "/pub/incoming/tmp/README.txt", ftplib::ascii);
-			myftp->Rmdir("/pub/incoming/tmp");
+			ok = myftp->Rmdir("/pub/incoming/tmp");
+			assert(!ok);
 		}
 
-		myftp->Dir("ftp-dir.txt", "/pub/incoming/");
-		myftp->Nlst("ftp-list.txt", "/pub/incoming/");
-		myftp->Mlsd("ftp-mlsd.txt", "/pub/incoming/");
+		ok = myftp->Dir("ftp-dir.txt", "/pub/incoming/");
+		assert(ok);
+		ok &= myftp->Nlst("ftp-list.txt", "/pub/incoming/");
+		assert(ok);
+		(void) myftp->Mlsd("ftp-mlsd.txt", "/pub/incoming/");
 
 		// check the mod time of the remote file
 		if (myftp->ModDate("/pub/incoming/sample", buf, sizeof(buf)))
@@ -174,8 +188,6 @@ int main(int argc, char** argv)
 		myftp->SetCallbackIdleFunction(myclass::callbackIdle);
 		myftp->SetCallbackLogFunction(myclass::callbackLog);
 
-		myftp->SetCorrectPasv(true);
-
 		// =========================
 		// upload
 		// get remote file size first
@@ -183,7 +195,7 @@ int main(int argc, char** argv)
 		if (!myftp->Put("sample", "/pub/incoming/sample.upload", ftplib::image, offset))
 		{
 			perror("ftplib::Put()");
-			//FIXME exit(EXIT_FAILURE);
+			//TBD exit(EXIT_FAILURE);
 		}
 		else if (myftp->Chdir("/pub/incoming/"))
 		{
@@ -197,7 +209,7 @@ int main(int argc, char** argv)
 		if (!myftp->Get("sample.download", filename.c_str(), ftplib::image, offset))
 		{
 			perror("ftplib::Get()");
-			//FIXME exit(EXIT_FAILURE);
+			//TBD exit(EXIT_FAILURE);
 		}
 		else if (rename("sample.download", "sample.bin"))
 		{
