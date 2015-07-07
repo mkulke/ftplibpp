@@ -1,24 +1,27 @@
-# ftplibpp
+Title: ftplibpp
 
-Platform independent c++ library providing ftp client functionality.
+ftplibpp
+===============
 
-ftplibpp contains a c++ class providing ftp client functionality. It supports all basic 
-ftp functionality plus some advanced features like resuming, fxp, ssl/tls encryption, 
+Platform independent c++ library providing FTP client functionality.
+
+ftplibpp contains a c++ class providing FTP client functionality. It supports all basic 
+FTP functionality plus some advanced features like resuming, fxp, SSL/TLS encryption, 
 large file support, or logging to fit todays standards.
 
 ## Documentation
 
-ftplibpp provides a c++ class providing ftp client functionality. It supports all basic ftp functionality plus some 
-advanced features like resuming, fxp, ssl/tls encryption, large file support, or logging to fit todays standards. The 
+ftplibpp provides a c++ class providing ftp client functionality. It supports all basic FTP functionality plus some 
+advanced features like resuming, fxp, SSL/TLs encryption, large file support, or logging to fit todays standards. The 
 very base of ftplibpp is Thomas Pfau's [ftplib c library](http://nbpfaus.net/%7Epfau/ftplib/).
 
-Every ftp session is represented by an ftplib object, whose methods are called to communicate with the ftp server. The 
-ftp sessions should begin with a call to *myftp.Connect("myftp.org:21")* (and maybe *myftp.NegotiateEncryption()* ), be 
+Every FTP session is represented by an ftplib object, whose methods are called to communicate with the FTP server. The 
+FTP sessions should begin with a call to *myftp.Connect("myftp.org")* (and maybe *myftp.NegotiateEncryption()* ), be 
 followed with *myftp.Login("myuser","mypass")* and ended by *myftp.Quit()*. For the magic in between, read the class 
 methods documentation. Most methods have their tasks pretty much explained in their name. ftplibpp uses OpenSSL for 
-encryption functionality, if you don't need it you can set the "NOSSL" flag (e.g. g++ -c ftplib.cpp -DNOSSL ). If your 
+encryption functionality, if you don't need it you can set the "NOSSL" flag (e.g. *g++ -c ftplib.cpp -DNOSSL* ). If your 
 system does not feature large file support (or does not need specific LFS functions, because it's built in yet) you can 
-use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ).
+use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS* ).
 
 ### Public types
 
@@ -32,11 +35,11 @@ use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ).
 * [enum fxpmethod](#fxpmethod)
 * [enum dataencryption](#dataencryption)
 
-### Methods
+### Public Methods
 
 * [ftplib ()](#ftplib)
 * [char* LastResponse ()](#lastresponse)
-* [int Connect (const char *host)](#connect)
+* [int Connect (const char *host, const char *port)](#connect)
 * [int Login (const char *user, const char *pass)](#login)
 * [int Site (const char *cmd)](#site)
 * [int Raw (const char *cmd)](#raw)
@@ -48,8 +51,8 @@ use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ).
 * [int Pwd (char *path, int max)](#pwd)
 * [int Nlst (const char *outputfile, const char *path)](#nlst)
 * [int Dir (const char *outputfile, const char *path)](#dir)
-* [int Size (const char *path, int *size, transfermode mode)](#size)
-* [int ModDate (const char *path, char *dt, int max)](#moddate)
+* [int Size (const char *path, off64_t *size, transfermode mode)](#size)
+* [int ModDate (const char *path, char *dt, size_t max)](#moddate)
 * [int Get (const char *outputfile, const char *path, transfermode mode)](#get)
 * [int Get (const char *outputfile, const char *path, transfermode mode, off64_t offset)](#get2)
 * [int Put (const char *inputfile, const char *path, transfermode mode)](#put)
@@ -58,10 +61,6 @@ use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ).
 * [int Delete (const char *path)](#delete)
 * [int SetDataEncryption (dataencryption enc)](#setdataencryption)
 * [int NegotiateEncryption ()](#negotiateencryption)
-* [ftphandle* RawOpen (const char *path, accesstype type, transfermode mode)](#rawopen)
-* [int RawRead (void *buf, int max, ftphandle *handle)](#rawread)
-* [int RawWrite (void *buf, int len, ftphandle *handle)](#rawwrite)
-* [int RawClose (ftphandle *handle)](#rawclose)
 * [void Quit ()](#quit)
 * [void SetCallbackIdleFunction (FtpCallbackIdle pointer)](#setcallbackidlefunction)
 * [void SetCallbackLogFunction (FtpCallbackLog pointer)](#setcallbacklogfunction)
@@ -76,6 +75,13 @@ use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ).
 ### Public static methods
 
 * [static int Fxp (ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, ftplib::ftp mode, ftplib::ftp method)](#fxp)
+
+### Private Methods
+
+* [ftphandle* RawOpen (const char *path, accesstype type, transfermode mode)](#rawopen)
+* [ssize_t RawRead (void *buf, size_t max, ftphandle *handle)](#rawread)
+* [ssize_t RawWrite (void *buf, size_t len, ftphandle *handle)](#rawwrite)
+* [int RawClose (ftphandle *handle)](#rawclose)
 
 ## Details
 
@@ -151,7 +157,7 @@ This type determines wether data is encrypted or not.
     
 [constructor]
       
-Class constructor, an ftplib object is responsible for the ftp session.
+Class constructor, an ftplib object is responsible for the FTP session.
     
 <a name="lastresponse" />
 
@@ -166,15 +172,17 @@ LastResponse() returns a pointer to the last server response string. Otherwise, 
       
 <a name="connect" />
 
-###int Connect ( const char* host )
+###int Connect ( const char* host, const char *port)
 
-Connect() establishes a connection to the FTP server on the specified machine and returns a handle which can be used to 
-initiate data transfers. The host name should be specified in the form of <host>:<port>. <host> may be either a host name or ip 
-address. <port> may be either a service name or a port number.
+Connect() establishes a connection to the FTP server on the specified machine
+and returns a handle which can be used to initiate data transfers.
+The host name may be either a host name or ip address.
+The port may be either a service name or a port.
+number.
     
 ####Parameters:
      
-*host:* The name of the host machine to connect to and optionally an alternate port number to use (ftp.myftp.com:321).
+*host:* The name of the host machine to connect to and optionally an alternate port number to use (*ftp.myftp.com:321*).
       
 ####Returns:
       
@@ -220,7 +228,7 @@ Raw() sends the specified command unmodified.
       
 ####Parameters:
 
-*cmd:* A string containing a custom ftp command. 
+*cmd:* A string containing a custom FTP command. 
       
 ####Returns:
       
@@ -344,7 +352,7 @@ Returns 1 if successful or 0 on error.
 
 <a name="size" />
 
-###int Size ( const char* path, int* size, transfermode mode ) 
+###int Size ( const char* path, off64_t* size, transfermode mode ) 
 
 Size() attempts to determine the size of a remote file. 
 
@@ -363,10 +371,11 @@ returned.
 
 <a name="moddate" />
 
-###int ModDate ( const char* path, char* dt, int max ) 
+###int ModDate ( const char* path, char* dt, size_t max ) 
 
-ModDate() attempts to determine the last access time of a remote file and return it to the user's buffer. The date and 
-time are returned as a string in the format 'YYYYMMDDHHMMSS'. 
+ModDate() attempts to determine the File Modification Time (MDTM) of a remote
+file and return it to the user's buffer. The date and time are returned as a
+string in the format 'YYYYMMDDHHMMSS'. 
 
 ####Parameters: 
 
@@ -403,7 +412,7 @@ Returns 1 if successful or 0 on error.
 
 ###int Get (const char* outputfile, const char *path, transfermode mode, off64_t offset )
 
-Get() copies the contents of a remote file from a given offset and appends it to a local file. Not all ftp servers might 
+Get() copies the contents of a remote file from a given offset and appends it to a local file. Not all FTP servers might 
 implement this feature. 
 
 ####Parameters: 
@@ -438,7 +447,7 @@ Returns 1 if successful or 0 on error.
 
 ###int Put ( const char* inputfile, const char *path, transfermode mode, off64_t offset )
 
-Put() copies the contents of a local file from a given offset and appends it to a remote file. Not all ftp servers might 
+Put() copies the contents of a local file from a given offset and appends it to a remote file. Not all FTP servers might 
 implement this feature. 
 
 ####Parameters: 
@@ -451,7 +460,9 @@ implement this feature.
 
 *offset:* Point from where the copy begins. 
 
-####Returns: Returns 1 if successful or 0 on error.
+####Returns: 
+
+Returns 1 if successful or 0 on error.
 
 <a name="rename" />
 
@@ -465,7 +476,9 @@ FtpRename() sends a rename request to the remote server.
 
 *dst:* A string containing the desired new name for the remote file.
 
-####Returns: Returns 1 if successful or 0 on error.
+####Returns: 
+
+Returns 1 if successful or 0 on error.
 
 <a name="delete" />
 
@@ -485,7 +498,7 @@ Returns 1 if successful or 0 on error.
 
 ###int SetDataEncryption ( dataencryption enc )
 
-On an already secured ftp session, SetDataEncryption() specifies if the data connection channel will be secured for the 
+On an already secured FTP session, SetDataEncryption() specifies if the data connection channel will be secured for the 
 next data transfer. 
 
 ####Parameters: 
@@ -504,7 +517,7 @@ See [NegotiateEncryption](#negotiateencryption)
 
 ###int NegotiateEncryption () 
 
-This Method is to be called after Connect and before Login to secure the ftp communication channel. 
+This Method is to be called after Connect and before Login to secure the FTP communication channel. 
 
 ####Returns: 
 
@@ -524,7 +537,7 @@ Quit() issues a 'QUIT' command and closes the connection to the remote server.
 
 ###void SetCallbackXferFunction ( FtpCallbackXfer pointer )
 
-When SetCallbackBytes is set to a bigger value than 0, a callback function can be called during an ftp data transfer. If 
+When SetCallbackBytes is set to a bigger value than 0, a callback function can be called during an FTP data transfer. If 
 the callback function returns 0, the data transfer is aborted. The callback function has two parameters: *xfered* & *arg*. 
 *xfered* is the amount of bytes yet transfered during the data connection and *arg* contains either NULL or a custom 
 pointer set by [SetCallbackArg](#setcallbackarg). If *pointer* is specified as NULL the xfer callback is disabled. 
@@ -544,10 +557,10 @@ method. valid code could look like this:
 ```cpp
 ...
 static int callback(off64_t xfered, void* arg); // static callback function defined in myclass.h 
-void mymethod(); // common myclass method
+void mymethod(off64_t xfered); // common myclass method
 ...
 int myclass::callback(off64_t xfered, void* arg) {
-  ((*myclass)(arg)->mymethod(); // casting the pointers to the correct type and calling class method 
+  ((*myclass)(arg))->mymethod(xfered); // casting the pointers to the correct type and calling class method 
   return 1; 
 }
 ...
@@ -676,7 +689,7 @@ SetConnmode specifies which data connection method is to be used for the next da
 ###void SetCorrectPasv ( bool b )
 
 Some Ftp-Servers, which run behind a NAT, return their local ip-adresses as PASV replies. When this option is turned on 
-PASV replies are corrected using the ip address the ftp session is currently connected to. 
+PASV replies are corrected using the ip address the FTP session is currently connected to. 
 
 ####Parameters:
 
@@ -688,7 +701,7 @@ PASV replies are corrected using the ip address the ftp session is currently con
 
 [static]
 
-Fxp is a static function. Tt uses two ftp session objects and transfer a certain file between them. 
+Fxp is a static function. Tt uses two FTP session objects and transfer a certain file between them. 
 
 ####Parameters: 
 
@@ -710,7 +723,7 @@ Currently Fxp does not work with encrypted data connections, so be sure to switc
 performing fxp.
 
 <a name="rawread" />
-###int RawRead ( void* buf, int max, ftphandle *handle )
+###ssize_t RawRead ( void* buf, size_t max, ftphandle *handle )
 
 RawRead copies up to max bytes of data from the specified data connection and returns it to the user's buffer. If the data
 connection was opened in ascii mode, no more than one line of data will be returned. 
@@ -727,7 +740,7 @@ Returns the number of bytes written to the user's buffer or -1 on error or end o
 
 <a name="rawwrite" />
 
-####int RawWrite ( void* buf, int len, ftphandle *handle )
+####ssize_t RawWrite ( void* buf, size_t len, ftphandle *handle )
 
 RawWrite() sends data to a remote file. If the file were accessed in record mode, the necessary conversions are performed.
 

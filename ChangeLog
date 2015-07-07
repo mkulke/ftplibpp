@@ -1,3 +1,10 @@
+v2.1.0
+
+- cleanup Makefile
+- prevent all g++ compiler warnings (pedantic)
+- astyle source code
+- disable deprecated encryption functionality 
+
 v2.0.4
 
 - Added support for MSVC 2012.

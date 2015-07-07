@@ -1,15 +1,22 @@
 # ftplibpp makefile
 
-SONAME = 2
-SOVERSION = $(SONAME).0
+SONAME := 2
+SOVERSION := $(SONAME).1
 
-TARGETS = libftp++.a libftp++.so
-OBJECTS = ftplib.o
-SOURCES = ftplib.cpp
+TARGETS := libftp++.a ###XXX libftp++.so
+OBJECTS := ftplib.o
+SOURCES := ftplib.cpp
+DEFINES += ###TBD -DNOSSL
+INCLUDES := -I/opt/local/include
+DEBUG := -g
+CXXWARNFLAGS := -Wold-style-cast -Wsign-conversion -Wconversion -Wsign-compare -Wpointer-arith
 
-CFLAGS = -Wall $(DEBUG) -I. $(INCLUDES) $(DEFINES)
-LDFLAGS = -L.
-DEPFLAGS =
+CXXFLAGS := -std=c++98 -Wall -Wextra $(CXXWARNFLAGS) $(DEBUG) -I$(CURDIR) $(INCLUDES) $(DEFINES)
+LDFLAGS := -L$(CURDIR)
+
+ifdef TCOV
+CXXFLAGS+= --coverage
+endif
 
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
@@ -19,46 +26,71 @@ ifeq ($(UNAME), Linux)
  LIBS = -lssl
 endif
 
-all : $(TARGETS)
+.PHONY: all clean distclean depend install uninstall astyle doc tcov
+all : $(TARGETS) doc
+	$(MAKE) -C sample test 'CXXFLAGS=$(CXXFLAGS)' 'LDFLAGS=$(LDFLAGS) $(LIBS)'
+
+tcov: TCOV=1
+tcov: CXXFLAGS+= --coverage
+tcov: all
+	gcov ftplib
+	gcov sample/sample
+
+astyle :
+	-astyle --style=ansi -t4 *.cpp *.h sample/sample.cpp
+
+doc : README.html
+README.html: README.md
+	-multimarkdown -o $@ $<
+	-tidy -qm -asxml $@
 
 clean :
-	rm -f $(OBJECTS) core *.bak
-	rm -rf unshared
-	rm -f $(TARGETS) .depend
+	rm -f $(OBJECTS)
+	rm -f $(TARGETS)
+	$(MAKE) -C sample clean
+
+distclean : clean
+	rm -f tags core README.html
+	rm -f .depend
 	rm -f libftp.so.*
+	-find . \( -name '*.gcno' -o -name '*.gcda' -o -name '*.gcov' -o -name '*.orig' -o -name '*~' \) -delete
+#	rm -rf unshared
 
 uninstall :
 	rm -f /usr/local/lib/libftp.so.*
 	rm -f /usr/local/include/libftp.h
 
-install : all
+install : all libftp++.so
 	install -m 644 libftp.so.$(SOVERSION) /usr/local/lib
 	install -m 644 ftplib.h /usr/local/include
 	(cd /usr/local/lib && \
 	 ln -sf libftp.so.$(SOVERSION) libftp.so.$(SONAME) && \
 	 ln -sf libftp.so.$(SONAME) libftp.so)
 
-depend :
-	$(CC) $(CFLAGS) -M $(SOURCES) > .depend
+depend : .depend
+.depend : ftplib.cpp ftplib.h
+	$(CXX) $(CXXFLAGS) -M $(SOURCES) > .depend
 
 # build without -fPIC
 #unshared/ftplib.o: ftplib.cpp ftplib.h
 #	-mkdir unshared
-#	$(CC) -c $(CFLAGS) -D_REENTRANT $< -o $@
+#	$(CXX) -c $(CXXFLAGS) -D_REENTRANT $< -o $@
 
 ftplib.o: ftplib.cpp ftplib.h
-	$(CC) -c $(CFLAGS) -fPIC -D_REENTRANT $< -o $@
+	$(CXX) -c $(CXXFLAGS) -fPIC -D_REENTRANT $< -o $@
 
-libftp++.a: ftplib.o
-	ar -rcs $@ $<
+libftp++.a: $(OBJECTS)
+	$(AR) -rcs $@ $<
 
-libftp.so.$(SOVERSION): ftplib.o
-	$(CC) -shared -Wl,-install_name,libftp.so.$(SONAME) $(LIBS) -lc -o $@ $<
+libftp.so.$(SOVERSION): $(OBJECTS)
+	$(CXX) -shared -Wl,-install_name,libftp.so.$(SONAME) $(LIBS) -lc -o $@ $<
 
 libftp++.so: libftp.so.$(SOVERSION)
 	ln -sf $< libftp.so.$(SONAME)
 	ln -sf $< $@
 
-ifeq (.depend,$(wildcard .depend))
-include .depend
+# include dependency files for any other rule:
+ifneq ($(filter-out clean distclean,$(MAKECMDGOALS)),)
+-include .depend
 endif
+
