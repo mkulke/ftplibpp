@@ -110,7 +110,7 @@ ftplib::ftplib()
 		free(mp_ftphandle);
 	}
 	#ifndef NOSSL
-	mp_ftphandle->ctx = SSL_CTX_new(SSLv3_method());
+	mp_ftphandle->ctx = SSL_CTX_new(_FTPLIB_SSL_CLIENT_METHOD_());
 	SSL_CTX_set_verify(mp_ftphandle->ctx, SSL_VERIFY_NONE, NULL);
 	mp_ftphandle->ssl = SSL_new(mp_ftphandle->ctx);
 	#endif
@@ -1198,7 +1198,7 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 
 	if (localfile != NULL)
 	{
-		printf("localfile: -%s-", localfile);
+		// printf("localfile: -%s-", localfile);
 	
 		//local = fopen(localfile, (typ == ftplib::filewrite) ? "r" : "w");
 		char ac[3] = "  ";
@@ -1252,10 +1252,8 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 	}
 	free(dbuf);
 	fflush(local);
-	if (localfile != NULL)
-	fclose(local);
+	if (localfile != NULL) fclose(local);
 	return FtpClose(nData);
-	return rv;
 }
 
 /*

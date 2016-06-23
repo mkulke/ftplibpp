@@ -55,6 +55,10 @@
 #include <openssl/ssl.h>
 #endif
 
+#ifndef _FTPLIB_SSL_CLIENT_METHOD_
+#define _FTPLIB_SSL_CLIENT_METHOD_ SSLv3_method
+#endif//_FTPLIB_SSL_CLIENT_METHOD_
+
 using namespace std;
 
 /**
