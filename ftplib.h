@@ -56,7 +56,7 @@
 #endif
 
 #ifndef _FTPLIB_SSL_CLIENT_METHOD_
-#define _FTPLIB_SSL_CLIENT_METHOD_ SSLv3_method
+#define _FTPLIB_SSL_CLIENT_METHOD_ TLSv1_2_client_method
 #endif//_FTPLIB_SSL_CLIENT_METHOD_
 
 using namespace std;

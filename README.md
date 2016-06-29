@@ -18,7 +18,9 @@ followed with *myftp.Login("myuser","mypass")* and ended by *myftp.Quit()*. For 
 methods documentation. Most methods have their tasks pretty much explained in their name. ftplibpp uses OpenSSL for 
 encryption functionality, if you don't need it you can set the "NOSSL" flag (e.g. g++ -c ftplib.cpp -DNOSSL ). If your 
 system does not feature large file support (or does not need specific LFS functions, because it's built in yet) you can 
-use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ).
+use the "NOLFS" flag (e.g. g++ -c ftplib.cpp -DNOLFS ). The flag _FTPLIB_SSL_CLIENT_METHOD_ exists to override the 
+openssl client method in use, the default is "TLSv1_2_client_method", override by compiling with -D_FTPLIB_SSL_CLIENT_METHOD_=<method>
+no paranthesis are required.
 
 ### Public types
 
