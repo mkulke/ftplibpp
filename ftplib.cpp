@@ -908,7 +908,7 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 	}
 
 	if (nControl->dir != FTPLIB_CONTROL) return -1;
-	sprintf(cmd,"%s\r\n",cmd);
+	memcpy(cmd + strlen(cmd), "\r\n\0", 3);
 #ifndef NOSSL
 	if (nControl->tlsctrl) ret = SSL_write(nControl->ssl,cmd,strlen(cmd));
 	else ret = net_write(nControl->handle,cmd,strlen(cmd));
