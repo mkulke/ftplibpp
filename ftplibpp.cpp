@@ -49,8 +49,6 @@ typedef int socklen_t;
 #define strdup _strdup
 #endif
 
-using namespace std;
-
 /* socket values */
 //#define SETSOCKOPT_OPTVAL_TYPE (void *)
 #define FTPLIB_BUFSIZ 1024
@@ -780,7 +778,7 @@ int ftplib::FtpOpenPort(ftphandle *nControl, ftphandle **nData, transfermode mod
 	if (mp_ftphandle->offset != 0)
 	{
 	char buf[256];
-    sprintf(buf,"REST %ld", mp_ftphandle->offset);
+    sprintf(buf,"REST %lld", mp_ftphandle->offset);
 	if (!FtpSendCmd(buf,'3',nControl))
 	{
 		net_close(sData);
@@ -884,7 +882,7 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 	if (mp_ftphandle->offset != 0)
 	{
 		char buf[256];
-        sprintf(buf,"REST %ld",mp_ftphandle->offset);
+        sprintf(buf,"REST %lld",mp_ftphandle->offset);
 		if (!FtpSendCmd(buf,'3',nControl)) return 0;
 	}
 
