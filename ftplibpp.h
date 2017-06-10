@@ -25,6 +25,8 @@
 #ifndef FTPLIB_H
 #define FTPLIB_H
 
+#define NOSSL
+
 #if defined(_WIN32)
 
 #if BUILDING_DLL
@@ -58,8 +60,6 @@
 #ifndef _FTPLIB_SSL_CLIENT_METHOD_
 #define _FTPLIB_SSL_CLIENT_METHOD_ TLSv1_2_client_method
 #endif//_FTPLIB_SSL_CLIENT_METHOD_
-
-using namespace std;
 
 /**
   *@author mkulke
@@ -175,7 +175,7 @@ public:
 	void SetCallbackXferFunction(FtpCallbackXfer pointer);
 	void SetCallbackArg(void *arg);
     void SetCallbackBytes(off64_t bytes);
-	void SetCorrectPasv(bool b) { mp_ftphandle->correctpasv = b; };
+    void SetCorrectPasv(bool b) { mp_ftphandle->correctpasv = b; }
     void SetCallbackIdletime(int time);
     void SetConnmode(connmode mode);
     static int Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, transfermode mode, fxpmethod method);
