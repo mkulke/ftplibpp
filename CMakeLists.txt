@@ -9,5 +9,5 @@ set(SRC_LIST ftplibpp.cpp)
 
 add_library(${PROJECT_NAME} SHARED ${SRC_LIST})
 
-install(FILES libscnet.so DESTINATION /usr/lib/)
-install(FILES ftplibpp.h DESTINATION /usr/include/ftplibpp/)
+install(FILES libftplibpp.so DESTINATION /usr/lib/)
+install(FILES ftplibpp.h DESTINATION /usr/include/)
