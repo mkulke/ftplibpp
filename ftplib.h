@@ -41,9 +41,9 @@
 #include <sys/time.h>
 #endif
 
-#ifdef NOLFS
-#define off64_t long
-#endif
+//#ifdef NOLFS
+//#define off64_t long
+//#endif
 
 #if defined(__APPLE__)
 #define off64_t __darwin_off_t
