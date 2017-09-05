@@ -51,9 +51,14 @@
 #define fopen64 fopen
 #endif
 
-#ifndef NOSSL
-#include <openssl/ssl.h>
-#endif
+//SSL
+typedef struct ssl_st SSL;
+typedef struct ssl_ctx_st SSL_CTX;
+typedef struct bio_st BIO;
+typedef struct x509_st X509;
+
+#include <sys/types.h>
+
 
 #ifndef _FTPLIB_SSL_CLIENT_METHOD_
 #define _FTPLIB_SSL_CLIENT_METHOD_ TLSv1_2_client_method
@@ -68,10 +73,9 @@ using namespace std;
 typedef int (*FtpCallbackXfer)(off64_t xfered, void *arg);
 typedef int (*FtpCallbackIdle)(void *arg);
 typedef void (*FtpCallbackLog)(char *str, void* arg, bool out);
-
-#ifndef NOSSL
+//SSL
 typedef bool (*FtpCallbackCert)(void *arg, X509 *cert);
-#endif
+
 
 struct ftphandle {
 	char *cput,*cget;
@@ -90,14 +94,14 @@ struct ftphandle {
 	off64_t cbbytes;
 	off64_t xfered1;
 	char response[256];
-#ifndef NOSSL
+//SSL
 	SSL* ssl;
 	SSL_CTX* ctx;
 	BIO* sbio;
 	int tlsctrl;
 	int tlsdata;
 	FtpCallbackCert certcb;
-#endif
+
 	off64_t offset;
 	bool correctpasv;
 };
@@ -109,33 +113,33 @@ class ftplib {
 #endif
 public:
 
-	enum accesstype
-	{
-		dir = 1,
-		dirverbose,
-		fileread,
-		filewrite,
-		filereadappend,
-		filewriteappend
-	}; 
+    enum accesstype
+    {
+	dir = 1,
+	dirverbose,
+	fileread,
+	filewrite,
+	filereadappend,
+	filewriteappend
+    };
 
-	enum transfermode
-	{
-		ascii = 'A',
-		image = 'I'
-	};
+    enum transfermode
+    {
+	ascii = 'A',
+	image = 'I'
+    };
 
-	enum connmode
-	{
-		pasv = 1,
-		port
-	};
+    enum connmode
+    {
+	pasv = 1,
+	port
+    };
 
-	enum fxpmethod
-	{
-		defaultfxp = 0,
+    enum fxpmethod
+    {
+	defaultfxp = 0,
         alternativefxp
-	};
+    };
 
     enum dataencryption
     {
@@ -143,8 +147,8 @@ public:
         secure
     };
 
-	ftplib();
-	~ftplib();
+    ftplib();
+    ~ftplib();
     char* LastResponse();
     int Connect(const char *host);
     int Login(const char *user, const char *pass);
@@ -164,26 +168,26 @@ public:
     int Put(const char *inputfile, const char *path, transfermode mode, off64_t offset = 0);
     int Rename(const char *src, const char *dst);
     int Delete(const char *path);
-#ifndef NOSSL    
-	int SetDataEncryption(dataencryption enc);
+//SSL
+    int SetDataEncryption(dataencryption enc);
     int NegotiateEncryption();
-	void SetCallbackCertFunction(FtpCallbackCert pointer);
-#endif
+    void SetCallbackCertFunction(FtpCallbackCert pointer);
+
     int Quit();
     void SetCallbackIdleFunction(FtpCallbackIdle pointer);
     void SetCallbackLogFunction(FtpCallbackLog pointer);
-	void SetCallbackXferFunction(FtpCallbackXfer pointer);
-	void SetCallbackArg(void *arg);
+    void SetCallbackXferFunction(FtpCallbackXfer pointer);
+    void SetCallbackArg(void *arg);
     void SetCallbackBytes(off64_t bytes);
-	void SetCorrectPasv(bool b) { mp_ftphandle->correctpasv = b; };
+    void SetCorrectPasv(bool b) { mp_ftphandle->correctpasv = b; }
     void SetCallbackIdletime(int time);
     void SetConnmode(connmode mode);
     static int Fxp(ftplib* src, ftplib* dst, const char *pathSrc, const char *pathDst, transfermode mode, fxpmethod method);
     
-	ftphandle* RawOpen(const char *path, accesstype type, transfermode mode);
-	int RawClose(ftphandle* handle); 
-	int RawWrite(void* buf, int len, ftphandle* handle);
-	int RawRead(void* buf, int max, ftphandle* handle); 
+    ftphandle* RawOpen(const char *path, accesstype type, transfermode mode);
+    int RawClose(ftphandle* handle);
+    int RawWrite(void* buf, int len, ftphandle* handle);
+    int RawRead(void* buf, int max, ftphandle* handle);
 
 private:
     ftphandle* mp_ftphandle;
@@ -198,13 +202,13 @@ private:
     int FtpAccess(const char *path, accesstype type, transfermode mode, ftphandle *nControl, ftphandle **nData);
     int FtpClose(ftphandle *nData);
 	
-	int socket_wait(ftphandle *ctl);
+    int socket_wait(ftphandle *ctl);
     int readline(char *buf,int max,ftphandle *ctl);
     int writeline(char *buf, int len, ftphandle *nData);
     int readresp(char c, ftphandle *nControl);
 	
-	void ClearHandle();
-	int CorrectPasvResponse(unsigned char *v);
+    void ClearHandle();
+    int CorrectPasvResponse(unsigned char *v);
 };
 
 #endif
