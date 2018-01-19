@@ -53,7 +53,7 @@ libftp++.a: ftplib.o
 	ar -rcs $@ $<
 
 libftp.so.$(SOVERSION): ftplib.o
-	$(CC) -shared -Wl,-install_name,libftp.so.$(SONAME) $(LIBS) -lc -o $@ $<
+	$(CC) -shared -Wl,-soname,libftp.so.$(SONAME) $(LIBS) -lc -o $@ $<
 
 libftp++.so: libftp.so.$(SOVERSION)
 	ln -sf $< libftp.so.$(SONAME)
