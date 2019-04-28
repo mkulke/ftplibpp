@@ -13,10 +13,20 @@ DEPFLAGS =
 
 UNAME := $(shell uname)
 ifeq ($(UNAME), Darwin)
- LIBS = -lssl -lcrypto
+	SOFLAG=install_name
+	ifndef NOSSL
+		LIBS = -lssl -lcrypto
+	else
+		LIBS =
+	endif
 endif
 ifeq ($(UNAME), Linux)
- LIBS = -lssl
+	SOFLAG=soname
+	ifndef NOSSL
+		LIBS = -lssl
+	else
+		LIBS =
+	endif
 endif
 
 all : $(TARGETS)
@@ -41,19 +51,14 @@ install : all
 depend :
 	$(CC) $(CFLAGS) -M $(SOURCES) > .depend
 
-# build without -fPIC
-#unshared/ftplib.o: ftplib.cpp ftplib.h
-#	-mkdir unshared
-#	$(CC) -c $(CFLAGS) -D_REENTRANT $< -o $@
-
 ftplib.o: ftplib.cpp ftplib.h
-	$(CC) -c $(CFLAGS) -fPIC -D_REENTRANT $< -o $@
+	$(CC) -c $(CFLAGS) -fPIC -D_REENTRANT -DNOSSL $< -o $@
 
 libftp++.a: ftplib.o
 	ar -rcs $@ $<
 
 libftp.so.$(SOVERSION): ftplib.o
-	$(CC) -shared -Wl,-soname,libftp.so.$(SONAME) $(LIBS) -lc -o $@ $<
+	$(CC) -shared -Wl,-$(SOFLAG),libftp.so.$(SONAME) $(LIBS) -lc -o $@ $<
 
 libftp++.so: libftp.so.$(SOVERSION)
 	ln -sf $< libftp.so.$(SONAME)

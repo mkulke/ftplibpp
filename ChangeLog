@@ -1,3 +1,6 @@
+v2.0.5
+- Fixed Bug when seeking on potentially unopened file.
+
 v2.0.4
 
 - Added support for MSVC 2012.

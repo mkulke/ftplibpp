@@ -49,6 +49,14 @@ typedef int socklen_t;
 #define strdup _strdup
 #endif
 
+#ifndef NOLFS
+#define _fseek fseek
+#define _fopen fopen
+#else
+#define _fseek fseeko64
+#define _fopen fopen64
+#endif
+
 using namespace std;
 
 /* socket values */
@@ -1198,9 +1206,6 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 
 	if (localfile != NULL)
 	{
-		// printf("localfile: -%s-", localfile);
-	
-		//local = fopen(localfile, (typ == ftplib::filewrite) ? "r" : "w");
 		char ac[3] = "  ";
 		if ((type == ftplib::dir) || (type == ftplib::dirverbose)) { ac[0] = 'w'; ac[1] = '\0'; }
 		if (type == ftplib::fileread) { ac[0] = 'w'; ac[1] = '\0'; }
@@ -1209,22 +1214,20 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 		if (type == ftplib::filewrite) { ac[0] = 'r'; ac[1] = '\0'; }
 		if (mode == ftplib::image) ac[1] = 'b';
 
-#ifndef NOLFS
-		local = fopen64(localfile, ac);
-		if (type == ftplib::filewriteappend) fseeko64(local,mp_ftphandle->offset,SEEK_SET);
-#else
-		local = fopen(localfile, ac);
-		if (type == ftplib::filewriteappend) fseek(local,mp_ftphandle->offset,SEEK_SET);	
-#endif
+		local = _fopen(localfile, ac);
 		if (local == NULL)
 		{
 			strncpy(nControl->response, strerror(errno), sizeof(nControl->response));
 			return 0;
 		}
+		if (type == ftplib::filewriteappend) _fseek(local,mp_ftphandle->offset,SEEK_SET);
 	}
 	if (local == NULL) local = ((type == ftplib::filewrite)
 		|| (type == ftplib::filewriteappend)) ? stdin : stdout;
-	if (!FtpAccess(path, type, mode, nControl, &nData)) return 0;
+	if (!FtpAccess(path, type, mode, nControl, &nData)) {
+    if (localfile != NULL) fclose(local);
+    return 0;
+  }
 
 	dbuf = static_cast<char*>(malloc(FTPLIB_BUFSIZ));
 	if ((type == ftplib::filewrite) || (type == ftplib::filewriteappend))
