@@ -53,15 +53,25 @@
 #define fopen64 fopen
 #endif
 
-#ifndef NOSSL
-#include <openssl/ssl.h>
-#endif
+//SSL
+typedef struct ssl_st SSL;
+typedef struct ssl_ctx_st SSL_CTX;
+typedef struct bio_st BIO;
+typedef struct x509_st X509;
+
+#include <sys/types.h>
 
 #ifndef _FTPLIB_SSL_CLIENT_METHOD_
 #define _FTPLIB_SSL_CLIENT_METHOD_ TLSv1_2_client_method
-#endif//_FTPLIB_SSL_CLIENT_METHOD_
+#endif
 
 using namespace std;
+
+//SSL
+typedef struct ssl_st SSL;
+typedef struct ssl_ctx_st SSL_CTX;
+typedef struct bio_st BIO;
+typedef struct x509_st X509;
 
 /**
   *@author mkulke
@@ -70,10 +80,9 @@ using namespace std;
 typedef int (*FtpCallbackXfer)(off64_t xfered, void *arg);
 typedef int (*FtpCallbackIdle)(void *arg);
 typedef void (*FtpCallbackLog)(char *str, void* arg, bool out);
-
-#ifndef NOSSL
+//SSL
 typedef bool (*FtpCallbackCert)(void *arg, X509 *cert);
-#endif
+
 
 struct ftphandle {
 	char *cput,*cget;
@@ -92,14 +101,14 @@ struct ftphandle {
 	off64_t cbbytes;
 	off64_t xfered1;
 	char response[256];
-#ifndef NOSSL
+  //SSL
 	SSL* ssl;
 	SSL_CTX* ctx;
 	BIO* sbio;
 	int tlsctrl;
 	int tlsdata;
 	FtpCallbackCert certcb;
-#endif
+
 	off64_t offset;
 	bool correctpasv;
 };
@@ -136,8 +145,8 @@ public:
 	enum fxpmethod
 	{
 		defaultfxp = 0,
-        alternativefxp
-	};
+    alternativefxp
+  };
 
   enum dataencryption
   {
@@ -166,11 +175,6 @@ public:
   int Put(const char *inputfile, const char *path, transfermode mode, off64_t offset = 0);
   int Rename(const char *src, const char *dst);
   int Delete(const char *path);
-#ifndef NOSSL
-  int SetDataEncryption(dataencryption enc);
-  int NegotiateEncryption();
-  void SetCallbackCertFunction(FtpCallbackCert pointer);
-#endif
   int Quit();
   void SetCallbackIdleFunction(FtpCallbackIdle pointer);
   void SetCallbackLogFunction(FtpCallbackLog pointer);
@@ -185,6 +189,10 @@ public:
   int RawClose(ftphandle* handle);
   int RawWrite(void* buf, int len, ftphandle* handle);
   int RawRead(void* buf, int max, ftphandle* handle);
+  // SSL
+  int SetDataEncryption(dataencryption enc);
+  int NegotiateEncryption();
+  void SetCallbackCertFunction(FtpCallbackCert pointer);
 
 private:
   ftphandle* mp_ftphandle;

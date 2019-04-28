@@ -1,13 +1,18 @@
-Sample Project
-===  
+# Sample Project
 
-    g++ -I.. -c sample.cpp
-    g++ -L.. -o sample sample.o -lftp++
+```
+g++ -I.. -c sample.cpp
+g++ -L.. -o sample sample.o -lftp++
+```
 
-OSX:
- 
-    DYLD_LIBRARY_PATH=.. ./sample
+## MacOs
 
-LINUX: 
+```
+DYLD_LIBRARY_PATH=.. ./sample
+```
 
-    LD_LIBRARY_PATH=.. ./sample
+## Linux
+
+```
+LD_LIBRARY_PATH=.. ./sample
+```
