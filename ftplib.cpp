@@ -49,14 +49,6 @@ typedef int socklen_t;
 #define strdup _strdup
 #endif
 
-#ifndef NOLFS
-#define _fseek fseek
-#define _fopen fopen
-#else
-#define _fseek fseeko64
-#define _fopen fopen64
-#endif
-
 using namespace std;
 
 /* socket values */
@@ -137,6 +129,14 @@ ftplib::~ftplib()
 	#endif
 	free(mp_ftphandle->buf);
 	free(mp_ftphandle);
+}
+
+void ftplib::sprint_rest(char *buf, off64_t offset) {
+#if defined(__APPLE__)
+		sprintf(buf,"REST %lld",offset);
+#else
+		sprintf(buf,"REST %ld",offset);
+#endif
 }
 
 /*
@@ -627,7 +627,7 @@ int ftplib::FtpAcceptConnection(ftphandle *nData, ftphandle *nControl)
 int ftplib::FtpAccess(const char *path, accesstype type, transfermode mode, ftphandle *nControl, ftphandle **nData)
 {
 	char buf[256];
-	int dir, ret;
+	int dir;
 
 	if ((path == NULL) && ((type == ftplib::filewrite)
 		|| (type == ftplib::fileread)
@@ -788,7 +788,7 @@ int ftplib::FtpOpenPort(ftphandle *nControl, ftphandle **nData, transfermode mod
 	if (mp_ftphandle->offset != 0)
 	{
 	char buf[256];
-	sprintf(buf,"REST %lld", mp_ftphandle->offset);
+  sprint_rest(buf, mp_ftphandle->offset);
 	if (!FtpSendCmd(buf,'3',nControl))
 	{
 		net_close(sData);
@@ -892,7 +892,7 @@ int ftplib::FtpOpenPasv(ftphandle *nControl, ftphandle **nData, transfermode mod
 	if (mp_ftphandle->offset != 0)
 	{
 		char buf[256];
-		sprintf(buf,"REST %lld",mp_ftphandle->offset);
+    sprint_rest(buf, mp_ftphandle->offset);
 		if (!FtpSendCmd(buf,'3',nControl)) return 0;
 	}
 
@@ -1187,7 +1187,7 @@ int ftplib::Pwd(char *path, int max)
 	if (s == NULL) return 0;
    s++;
 	while ((--l) && (*s) && (*s != '"')) *b++ = *s++;
-	*b++ = '\0';
+	*b = '\0';
 	return 1;
 }
 
@@ -1202,7 +1202,6 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 	char *dbuf;
 	FILE *local = NULL;
 	ftphandle *nData;
-	int rv=1; // 3.1-1
 
 	if (localfile != NULL)
 	{
@@ -1214,13 +1213,13 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 		if (type == ftplib::filewrite) { ac[0] = 'r'; ac[1] = '\0'; }
 		if (mode == ftplib::image) ac[1] = 'b';
 
-		local = _fopen(localfile, ac);
+		local = fopen64(localfile, ac);
 		if (local == NULL)
 		{
 			strncpy(nControl->response, strerror(errno), sizeof(nControl->response));
 			return 0;
 		}
-		if (type == ftplib::filewriteappend) _fseek(local,mp_ftphandle->offset,SEEK_SET);
+		if (type == ftplib::filewriteappend) fseeko64(local,mp_ftphandle->offset,SEEK_SET);
 	}
 	if (local == NULL) local = ((type == ftplib::filewrite)
 		|| (type == ftplib::filewriteappend)) ? stdin : stdout;
@@ -1237,7 +1236,6 @@ int ftplib::FtpXfer(const char *localfile, const char *path, ftphandle *nControl
 			if ((c = FtpWrite(dbuf, l, nData)) < l)
 			{
 				printf("short write: passed %d, wrote %d\n", l, c);
-				rv = 0;
 				break;
 			}
 		}
