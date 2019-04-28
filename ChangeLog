@@ -1,5 +1,7 @@
 v2.0.5
 - Fixed Bug when seeking on potentially unopened file.
+- Removed some compiler warnings.
+- Fixed sprintf undefined behaviour.
 
 v2.0.4
 
