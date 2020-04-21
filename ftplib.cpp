@@ -702,8 +702,7 @@ int ftplib::FtpAccess(const char *path, accesstype type, transfermode mode, ftph
 		(*nData)->ssl = SSL_new(nControl->ctx);
 		(*nData)->sbio = BIO_new_socket((*nData)->handle, BIO_NOCLOSE);
 		SSL_set_bio((*nData)->ssl,(*nData)->sbio,(*nData)->sbio);
-		ret = SSL_connect((*nData)->ssl);
-		if (ret != 1) return 0;
+		if (SSL_connect((*nData)->ssl) != 1) return 0;
 		(*nData)->tlsdata = 1;
 	}
 #endif
